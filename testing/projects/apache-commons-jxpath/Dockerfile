@@ -9,3 +9,4 @@ RUN mvn clean package
 FROM scratch
 
 COPY --from=builder /build/commons-jxpath/target/*.jar /repo/
+COPY ../../../jazzer-linux/jazzer_standalone.jar /repo/
