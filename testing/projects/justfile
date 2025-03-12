@@ -37,7 +37,7 @@ build_jar PROJECT:
     echo "Building project {{PROJECT}}"
     mkdir -p "{{DATA}}/{{PROJECT}}"
     mkdir -p "{{DATA}}/{{PROJECT}}/target"
-    cd projects/{{PROJECT}}
+    cd {{PROJECT}}
     docker build --output={{DATA}}/{{PROJECT}} -t {{PROJECT}} .
 
 # Recipe to fuzz project
