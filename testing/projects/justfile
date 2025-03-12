@@ -7,7 +7,7 @@ export DOCKER_BUILDKIT := "1"
 BASE_DIR := abspath("../")
 
 # Define PROJECTS
-PROJECTS := (ls -d projects/*/ | xargs -n 1 basename)
+PROJECTS := `ls -d projects/*/ | xargs -n 1 basename`
 
 DATA := "{{BASE_DIR}}/fuzzing_data"
 
