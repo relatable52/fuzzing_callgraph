@@ -1,3 +1,5 @@
+set dotenv-load := true
+set dotenv-path := "apache-commons-jxpath/.env"
 set shell := ["bash", "-uc"]
 
 # Export DOCKER_BUILDKIT
@@ -20,8 +22,7 @@ load_env PROJECT:
     echo {{PROJECT}}
     echo {{BASE_DIR}}
     echo {{DATA}}
-    set -a; source "{{BASE_DIR}}/projects/{{PROJECT}}/.env"; set +a
-    echo $FUZZER
+    printenv
 
 # Recipe to build Jazzer Docker image
 build_jazzer_image:
