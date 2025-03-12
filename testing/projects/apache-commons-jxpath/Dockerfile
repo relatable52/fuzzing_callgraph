@@ -13,7 +13,7 @@ COPY --from=jazzer jazzer_standalone.jar /repo/
 
 RUN mkdir /build/fuzzer
 WORKDIR /build/fuzzer
-RUN --mount=type=bind,source=src/, target=src/ \
+RUN --mount=type=bind,source=src/,target=src/ \
     javac -source 8 -target 8 -cp "/repo/*" -d target src/*Fuzzer.java && \
     jar cf /repo/fuzzer.jar -C target . && \
     rm -rf target
