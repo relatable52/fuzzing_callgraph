@@ -11,7 +11,7 @@ RUN mkdir -p /repo/ && cp /build/commons-jxpath/target/*.jar /repo/
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 
-RUN mkdir /build/fuzzer
+RUN mkdir -p /build/fuzzer /build/fuzzer/target
 WORKDIR /build/fuzzer
 RUN --mount=type=bind,source=src/,target=src/ \
     javac -source 8 -target 8 -cp "/repo/*" -d target src/*Fuzzer.java && \
