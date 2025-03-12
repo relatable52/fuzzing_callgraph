@@ -38,7 +38,7 @@ build_jar PROJECT:
     mkdir -p "{{DATA}}/{{PROJECT}}"
     mkdir -p "{{DATA}}/{{PROJECT}}/target"
     cd {{PROJECT}}
-    docker build --output={{DATA}}/{{PROJECT}} -t {{PROJECT}} .
+    docker build --output={{DATA}}/{{PROJECT}} -t {{PROJECT}} -f {{PROJECT}}/Dockerfile {{PROJECT}}
 
 # Recipe to fuzz project
 fuzz PROJECT: (build_jar PROJECT) (load_env PROJECT) build_jazzer_image
