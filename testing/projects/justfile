@@ -1,0 +1,78 @@
+set shell := ["bash", "-uc"]
+
+# Export DOCKER_BUILDKIT
+export DOCKER_BUILDKIT := "1"
+
+# Define BASE_DIR
+BASE_DIR := abspath("../")
+
+# Define PROJECTS
+PROJECTS := $(ls -d projects/*/ | xargs -n 1 basename)
+
+DATA := "{{BASE_DIR}}/fuzzing_data"
+
+FUZZING_THREADS := "2"
+FUZZING_TIME := "120"
+
+DISABLED_HOOKS:= "com.code_intelligence.jazzer.sanitizers.ReflectiveCall:com.code_intelligence.jazzer.sanitizers.SqlInjection:com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery"
+
+load_env PROJECT:
+    if [ -f "{{BASE_DIR}}/projects/{{PROJECT}}/.env" ]; then
+        export $(cat "{{BASE_DIR}}/projects/{{PROJECT}}/.env" | xargs)
+    fi
+
+# Recipe to build Jazzer Docker image
+build_jazzer_image:
+    docker build -t jazzer -f {{BASE_DIR}}/jazzer-linux/Dockerfile {{BASE_DIR}}/jazzer-linux
+
+# Recipe to build JCG Docker image
+build_jcg_image:
+    docker build -t jcg -f {{BASE_DIR}}/jcg/Dockerfile {{BASE_DIR}}/jcg
+
+# Recipe to build project JAR
+build_jar PROJECT:
+    if echo "{{PROJECTS}}" | grep -wq "{{PROJECT}}"; then
+        echo "Building project {{PROJECT}}"
+        if [ ! -d "{{DATA}}/{{PROJECT}}" ]; then
+            mkdir -p "{{DATA}}/{{PROJECT}}"
+            mkdir -p "{{DATA}}/{{PROJECT}}/target"
+        fi
+        (
+            cd projects/{{PROJECT}}
+            docker build --output={{DATA}}/{{PROJECT}} -t {{PROJECT}} .
+        )
+    else
+        echo "Error: Project '{{PROJECT}}' not found in PROJECTS!"
+        exit 1
+    fi
+
+# Recipe to fuzz project
+fuzz PROJECT: (build_jar PROJECT) (load_env PROJECT) build_jazzer_image
+    echo "Fuzzing project {{PROJECT}}"
+
+    PROJECT_PATH="{{DATA}}/{{PROJECT}}"
+    TARGET_PATH="{{PROJECT_PATH}}/target"
+
+    mkdir -p "{{TARGET_PATH}}/fuzzing/fuzzing-coverage" \
+    "{{PROJECT_PATH}}/resources"
+
+    touch "{{TARGET_PATH}}/fuzzing/sync_file" \
+    "{{TARGET_PATH}}/fuzzing/fuzzing-coverage/coverage.exec" \
+
+    docker rm -f "{{PROJECT}}-fuzzer"
+    docker run -it \
+        --name "{{PROJECT}}-fuzzer" \
+        --mount type=bind,source="{{PROJECT_PATH}}/repo",target=/repo, readonly \
+        --mount type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
+        --mount type=bind,source="{{TARGET_PATH}}/fuzzing/fuzzing_coverage/coverage.exec",target=/fuzzing/coverage.exec \
+        --mount type=bind,source="{{TARGET_PATH}}/fuzzing/sync_file",target=/fuzzing/sync_file \
+        jazzer \
+        --cp=$(find "{{PROJECT_PATH}}/repo" -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
+        --target_class=$FUZZER \
+        --instrumentation_includes=$INSTRUMENT_CLASSES \
+        --disabled_hooks={{DISABLED_HOOKS}} \
+        --id_sync_file=/fuzzing/sync_file \
+        -max_total_time={{FUZZING_TIME}} \
+        -fork={{FUZZING_THREADS}} \
+        -max_len=100000 \
+        -timeout=60
