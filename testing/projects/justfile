@@ -7,9 +7,9 @@ export DOCKER_BUILDKIT := "1"
 BASE_DIR := absolute_path("../")
 
 # Define PROJECTS
-PROJECTS := `ls -d projects/*/ | xargs -n 1 basename`
+PROJECTS := `ls -d ../projects | xargs -n 1 basename`
 
-DATA := "{{BASE_DIR}}/fuzzing_data"
+DATA :=  BASE_DIR / "fuzzing_data"
 
 FUZZING_THREADS := "2"
 FUZZING_TIME := "120"
@@ -17,7 +17,11 @@ FUZZING_TIME := "120"
 DISABLED_HOOKS:= "com.code_intelligence.jazzer.sanitizers.ReflectiveCall:com.code_intelligence.jazzer.sanitizers.SqlInjection:com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery"
 
 load_env PROJECT:
+    echo {{PROJECT}}
+    echo {{BASE_DIR}}
+    echo {{DATA}}
     set -a; source "{{BASE_DIR}}/projects/{{PROJECT}}/.env"; set +a
+    echo $FUZZER
 
 # Recipe to build Jazzer Docker image
 build_jazzer_image:
