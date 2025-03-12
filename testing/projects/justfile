@@ -4,7 +4,7 @@ set shell := ["bash", "-uc"]
 export DOCKER_BUILDKIT := "1"
 
 # Define BASE_DIR
-BASE_DIR := abspath("../")
+BASE_DIR := absolute_path("../")
 
 # Define PROJECTS
 PROJECTS := `ls -d projects/*/ | xargs -n 1 basename`
