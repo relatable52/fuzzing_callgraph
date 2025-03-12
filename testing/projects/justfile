@@ -33,7 +33,7 @@ build_jcg_image:
     docker build -t jcg -f {{BASE_DIR}}/jcg/Dockerfile {{BASE_DIR}}/jcg
 
 # Recipe to build project JAR
-build_jar PROJECT:
+build_jar PROJECT: build_jazzer_image
     echo "Building project {{PROJECT}}"
     mkdir -p "{{DATA}}/{{PROJECT}}"
     mkdir -p "{{DATA}}/{{PROJECT}}/target"
