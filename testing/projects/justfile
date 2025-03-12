@@ -17,9 +17,7 @@ FUZZING_TIME := "120"
 DISABLED_HOOKS:= "com.code_intelligence.jazzer.sanitizers.ReflectiveCall:com.code_intelligence.jazzer.sanitizers.SqlInjection:com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery"
 
 load_env PROJECT:
-    if [ -f "{{BASE_DIR}}/projects/{{PROJECT}}/.env" ]; then
-        export $(cat "{{BASE_DIR}}/projects/{{PROJECT}}/.env" | xargs)
-    fi
+    set -a; source "{{BASE_DIR}}/projects/{{PROJECT}}/.env"; set +a
 
 # Recipe to build Jazzer Docker image
 build_jazzer_image:
@@ -31,43 +29,34 @@ build_jcg_image:
 
 # Recipe to build project JAR
 build_jar PROJECT:
-    if echo "{{PROJECTS}}" | grep -wq "{{PROJECT}}"; then
-        echo "Building project {{PROJECT}}"
-        if [ ! -d "{{DATA}}/{{PROJECT}}" ]; then
-            mkdir -p "{{DATA}}/{{PROJECT}}"
-            mkdir -p "{{DATA}}/{{PROJECT}}/target"
-        fi
-        (
-            cd projects/{{PROJECT}}
-            docker build --output={{DATA}}/{{PROJECT}} -t {{PROJECT}} .
-        )
-    else
-        echo "Error: Project '{{PROJECT}}' not found in PROJECTS!"
-        exit 1
-    fi
+    echo "Building project {{PROJECT}}"
+    mkdir -p "{{DATA}}/{{PROJECT}}"
+    mkdir -p "{{DATA}}/{{PROJECT}}/target"
+    cd projects/{{PROJECT}}
+    docker build --output={{DATA}}/{{PROJECT}} -t {{PROJECT}} .
 
 # Recipe to fuzz project
 fuzz PROJECT: (build_jar PROJECT) (load_env PROJECT) build_jazzer_image
     echo "Fuzzing project {{PROJECT}}"
 
-    PROJECT_PATH="{{DATA}}/{{PROJECT}}"
-    TARGET_PATH="{{PROJECT_PATH}}/target"
+    export PROJECT_PATH="{{DATA}}/{{PROJECT}}"
+    export TARGET_PATH="$PROJECT_PATH/target"
 
-    mkdir -p "{{TARGET_PATH}}/fuzzing/fuzzing-coverage" \
-    "{{PROJECT_PATH}}/resources"
+    mkdir -p "$TARGET_PATH/fuzzing/fuzzing-coverage" \
+    "$TPROJECT_PATH/resources"
 
-    touch "{{TARGET_PATH}}/fuzzing/sync_file" \
-    "{{TARGET_PATH}}/fuzzing/fuzzing-coverage/coverage.exec" \
+    touch "$TARGET/fuzzing/sync_file" \
+    "$TARGET/fuzzing/fuzzing-coverage/coverage.exec" \
 
     docker rm -f "{{PROJECT}}-fuzzer"
     docker run -it \
         --name "{{PROJECT}}-fuzzer" \
-        --mount type=bind,source="{{PROJECT_PATH}}/repo",target=/repo, readonly \
-        --mount type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
-        --mount type=bind,source="{{TARGET_PATH}}/fuzzing/fuzzing_coverage/coverage.exec",target=/fuzzing/coverage.exec \
-        --mount type=bind,source="{{TARGET_PATH}}/fuzzing/sync_file",target=/fuzzing/sync_file \
+        --mount type=bind,source="$PROJECT_PATH/repo",target=/repo, readonly \
+        --mount type=bind,source="$PROJECT_PATH/resources/",target=/resources/,readonly \
+        --mount type=bind,source="$TARGET/fuzzing/fuzzing_coverage/coverage.exec",target=/fuzzing/coverage.exec \
+        --mount type=bind,source="$TARGET/fuzzing/sync_file",target=/fuzzing/sync_file \
         jazzer \
-        --cp=$(find "{{PROJECT_PATH}}/repo" -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
+        --cp=$(find "$TPROJECT_PATH/repo" -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
         --target_class=$FUZZER \
         --instrumentation_includes=$INSTRUMENT_CLASSES \
         --disabled_hooks={{DISABLED_HOOKS}} \
