@@ -92,7 +92,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
         --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file",target=/fuzzing/sync_file \
         --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/dict.txt,target=/fuzzing/dict.txt,readonly \
         jazzer \
-        --cp=$(find "$TPROJECT_PATH/repo" -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
+        --cp=$(find "{{TARGET_PATH}}"/repo -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
         --target_class={{FUZZER}}\
         --instrumentation_includes=$INSTRUMENT_CLASSES \
         --disabled_hooks={{DISABLED_HOOKS}} \
@@ -119,7 +119,7 @@ coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT
         --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/corpus,target=/corpus,readonly \
         --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage/coverage.exec,target=/coverage/coverage.exec \
         jazzer \
-        --cp=$(find "$PROJECT_PATH/repo" -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
+        --cp=$(find "{{TARGET_PATH}}"/repo -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
         --target_class={{FUZZER}}\
         --instrumentation_includes=$INSTRUMENT_CLASSES \
         --disabled_hooks={{DISABLED_HOOKS}} \
@@ -130,24 +130,25 @@ coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT
 
 [private]
 coverage_report EXPERIMENT COVERAGE_DIR EXCLUDE_CLASSES:
-    cp -r "{{PROJECT_PATH}}"/classes "{{TARGET_PATH}}"
+    mkdir -p "{{TARGET_PATH}}/temp"
+    cp -a "{{TARGET_PATH}}/classes/." "{{TARGET_PATH}}/temp"
     if {{EXCLUDE_CLASSES}} && [ ! -z $COVERAGE_EXCLUDES ]; \
     then \
       readarray -t EXCLUDES <<< "$COVERAGE_EXCLUDES" && \
       for (( n=0; n < ${#EXCLUDES[*]}; n++)) do \
-        rm ""{{PROJECT_PATH}}"/target/classes/${EXCLUDES[n]//\./\/}.class"; \
+        rm "{{TARGET_PATH}}/temp/${EXCLUDES[n]//\./\/}.class"; \
       done; \
     fi
 
     # generate report
-    rm -rf "{{TARGET_PATH}}"/{{EXPERIMENT}}/{{COVERAGE_DIR}}/html
-    mkdir -p "{{TARGET_PATH}}"/{{EXPERIMENT}}/{{COVERAGE_DIR}}/html
+    rm -rf "{{TARGET_PATH}}/{{EXPERIMENT}}/{{COVERAGE_DIR}}/html"
+    mkdir -p "{{TARGET_PATH}}/{{EXPERIMENT}}/{{COVERAGE_DIR}}/html"
     java -jar {{JACOCO}}/jacococli.jar \
-      report "{{TARGET_PATH}}"/{{EXPERIMENT}}/{{COVERAGE_DIR}}/coverage.exec \
-      --classfiles "{{TARGET_PATH}}"/classes \
-      --html "{{TARGET_PATH}}"/{{EXPERIMENT}}/{{COVERAGE_DIR}}/html
+      report "{{TARGET_PATH}}/{{EXPERIMENT}}/{{COVERAGE_DIR}}/coverage.exec" \
+      --classfiles "{{TARGET_PATH}}/temp" \
+      --html "{{TARGET_PATH}}/{{EXPERIMENT}}/{{COVERAGE_DIR}}/html"
 
-    rm -rf "{{TARGET_PATH}}"/classes
+    rm -rf "{{TARGET_PATH}}/temp"
 
 # Record coverage on seed corpus
 coverage_seed: (prepare_corpus "seed") (coverage "seed")
