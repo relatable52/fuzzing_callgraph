@@ -63,13 +63,13 @@ build_jar:
 prepare_dictionary EXPERIMENT: 
     mkdir -p {{TARGET_PATH}}/{{EXPERIMENT}}
 
-    "{{BASE_DIR}}/{{PROJECT}}/prepare_dictionary.sh" {{TARGET_PATH}}/{{EXPERIMENT}}
+    "{{BASE_DIR}}/projects/{{PROJECT}}/prepare_dictionary.sh" {{TARGET_PATH}}/{{EXPERIMENT}}
 
 [private]
 prepare_corpus EXPERIMENT:
     mkdir -p {{TARGET_PATH}}/{{EXPERIMENT}}/corpus
 
-    "{{BASE_DIR}}/{{PROJECT}}/prepare_corpus.sh" {{TARGET_PATH}}/{{EXPERIMENT}}/corpus
+    "{{BASE_DIR}}/projects/{{PROJECT}}/prepare_corpus.sh" {{TARGET_PATH}}/{{EXPERIMENT}}/corpus
 
 # Recipe to fuzz project
 fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image && (coverage_report EXPERIMENT "fuzzing_coverage" "true")
