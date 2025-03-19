@@ -1,72 +1,185 @@
 set dotenv-load := true
-set dotenv-path := "apache-commons-jxpath/.env"
 set shell := ["bash", "-uc"]
 
 # Export DOCKER_BUILDKIT
 export DOCKER_BUILDKIT := "1"
 
-# Define BASE_DIR
-BASE_DIR := absolute_path("../")
+# Define project paths
+export BASE_DIR := absolute_path("../")
+PROJECT := ${PROJECT}
+PROJECT_PATH := "{{DATA}}/${PROJECT}"
+TARGET_PATH := "{{PROJECT_PATH}}/target"
 
-# Define PROJECTS
-PROJECTS := `ls -d ../projects | xargs -n 1 basename`
+# Define DATA directory (change to your desired location)
+export DATA :=  BASE_DIR / "fuzzing_data"
+export CORPUS := BASE_DIR / "fuzzing_corpora"
 
-DATA :=  BASE_DIR / "fuzzing_data"
-
+# Fuzzing parameters
+FUZZER := ${FUZZER}
 FUZZING_THREADS := "2"
 FUZZING_TIME := "120"
 
+# Static callgraph parameters
+DYNCG_TIMEOUT := "999m"
+DYNCG_MEMORY := "400G"
+STATICCG_TIMEOUT := "180m"
+STATICCG_MEMORY := "400G"
+
+# Containers
+FUZZING_CONTAINER := "fuzz-" + PROJECT
+COVERAGE_CONTAINER := "coverage-" + PROJECT
+DYNCG_CONTAINER := "dyncg-" + PROJECT
+STATICCG_CONTAINER := "staticcg-" + PROJECT
+COMPARECG_CONTAINER := "comparecg-" + PROJECT
+
+# Libraries
+JACOCO := BASE_DIR / "lib/jacoco"
+JAVA_CALLGRAPH := BASE_DIR / "lib/java-callgraph"
+
+UID := `id -u`
+GID := `id -g`
+
+# Disabled hooks
 DISABLED_HOOKS:= "com.code_intelligence.jazzer.sanitizers.ReflectiveCall:com.code_intelligence.jazzer.sanitizers.SqlInjection:com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery"
 
-load_env PROJECT:
-    echo {{PROJECT}}
-    echo {{BASE_DIR}}
-    echo {{DATA}}
-    printenv
-
 # Recipe to build Jazzer Docker image
+[private]
 build_jazzer_image:
     docker build -t jazzer -f {{BASE_DIR}}/jazzer-linux/Dockerfile {{BASE_DIR}}/jazzer-linux
 
 # Recipe to build JCG Docker image
+[private]
 build_jcg_image:
     docker build -t jcg -f {{BASE_DIR}}/jcg/Dockerfile {{BASE_DIR}}/jcg
 
 # Recipe to build project JAR
-build_jar PROJECT: build_jazzer_image
-    echo "Building project {{PROJECT}}"
-    mkdir -p "{{DATA}}/{{PROJECT}}"
-    mkdir -p "{{DATA}}/{{PROJECT}}/target"
-    cd {{PROJECT}}
-    docker build --output={{DATA}}/{{PROJECT}} -t {{PROJECT}} -f {{PROJECT}}/Dockerfile {{PROJECT}}
+build_jar:
+    if [ ! -d "{{BASE_DIR}}/projects/${PROJECT}" ]; then echo "Project ${PROJECT} not found in {{DATA}}"; exit 1; fi
+    mkdir -p "{{TARGET_PATH}}"
+    cd ${PROJECT}
+    docker build --output="{{TARGET_PATH}}" -t ${PROJECT} -f ${PROJECT}/Dockerfile ${PROJECT}
+
+[private]
+prepare_dictionary EXPERIMENT: 
+    mkdir -p {{TARGET_PATH}}/{{EXPERIMENT}}
+
+    "{{BASE_DIR}}/{{PROJECT}}/prepare_dictionary.sh" {{TARGET_PATH}}/{{EXPERIMENT}}
+
+[private]
+prepare_corpus EXPERIMENT:
+    mkdir -p {{TARGET_PATH}}/{{EXPERIMENT}}/corpus
+
+    "{{BASE_DIR}}/{{PROJECT}}/prepare_corpus.sh" {{TARGET_PATH}}/{{EXPERIMENT}}/corpus
 
 # Recipe to fuzz project
-fuzz PROJECT: (build_jar PROJECT) (load_env PROJECT) build_jazzer_image
-    echo "Fuzzing project {{PROJECT}}"
+fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image && (coverage_report EXPERIMENT "fuzzing_coverage" "true")
+    # Ensure directories exist
+    mkdir -p "{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing-coverage" \
+    "{{PROJECT_PATH}}/resources" \
+    "{{TARGET_PATH}}/{{EXPERIMENT}}/corpus"
 
-    export PROJECT_PATH="{{DATA}}/{{PROJECT}}"
-    export TARGET_PATH="$PROJECT_PATH/target"
+    touch "{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file" \
+    "{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing-coverage/coverage.exec" \
 
-    mkdir -p "$TARGET_PATH/fuzzing/fuzzing-coverage" \
-    "$TPROJECT_PATH/resources"
-
-    touch "$TARGET/fuzzing/sync_file" \
-    "$TARGET/fuzzing/fuzzing-coverage/coverage.exec" \
-
-    docker rm -f "{{PROJECT}}-fuzzer"
+    # Run fuzzer
+    docker rm -f "{{FUZZING_CONTAINER}}"
     docker run -it \
-        --name "{{PROJECT}}-fuzzer" \
-        --mount type=bind,source="$PROJECT_PATH/repo",target=/repo, readonly \
-        --mount type=bind,source="$PROJECT_PATH/resources/",target=/resources/,readonly \
-        --mount type=bind,source="$TARGET/fuzzing/fuzzing_coverage/coverage.exec",target=/fuzzing/coverage.exec \
-        --mount type=bind,source="$TARGET/fuzzing/sync_file",target=/fuzzing/sync_file \
+        --name "{{FUZZING_CONTAINER}}" \
+        --mount type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
+        --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/corpus",target=/fuzzing/corpus \
+        --mount type=bind,source="{{PROJECT_PATH}}/resources",target=/resources/,readonly \
+        --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing-coverage/coverage.exec",target=/fuzzing/coverage.exec \
+        --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file",target=/fuzzing/sync_file \
+        --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/dict.txt,target=/fuzzing/dict.txt,readonly \
         jazzer \
         --cp=$(find "$TPROJECT_PATH/repo" -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
-        --target_class=$FUZZER \
+        --target_class={{FUZZER}}\
         --instrumentation_includes=$INSTRUMENT_CLASSES \
         --disabled_hooks={{DISABLED_HOOKS}} \
         --id_sync_file=/fuzzing/sync_file \
         -max_total_time={{FUZZING_TIME}} \
         -fork={{FUZZING_THREADS}} \
         -max_len=100000 \
-        -timeout=60
+        -timeout=60 \
+        -dict=dict.txt \
+        corpus
+
+[private]
+coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT "coverage" "false")
+    mkdir -p "{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage "{{PROJECT_PATH}}"/resources
+    touch "{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage/coverage.exec
+
+    # record coverage
+    docker rm -f {{COVERAGE_CONTAINER}}
+    docker run -it \
+        --name {{COVERAGE_CONTAINER}} \
+        --mount type=bind,source="{{TARGET_PATH}}"/repo,target=/repo,readonly \
+        --mount type=bind,source="{{PROJECT_PATH}}"/resources/,target=/resources/,readonly \
+        --mount type=bind,source={{JACOCO}}/jacocoagent.jar,target=/jacocoagent.jar,readonly \
+        --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/corpus,target=/corpus,readonly \
+        --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage/coverage.exec,target=/coverage/coverage.exec \
+        jazzer \
+        --cp=$(find "$TPROJECT_PATH/repo" -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
+        --target_class={{FUZZER}}\
+        --instrumentation_includes=$INSTRUMENT_CLASSES \
+        --disabled_hooks={{DISABLED_HOOKS}} \
+        --jvm_args="-javaagent:/jacocoagent.jar=destfile=coverage/coverage.exec" \
+        -rss_limit_mb=8182 \
+        -runs=0 \
+        corpus 
+
+[private]
+coverage_report EXPERIMENT COVERAGE_DIR EXCLUDE_CLASSES:
+    cp -r "{{PROJECT_PATH}}"/classes "{{TARGET_PATH}}"
+    if {{EXCLUDE_CLASSES}} && [ ! -z $COVERAGE_EXCLUDES ]; \
+    then \
+      readarray -t EXCLUDES <<< "$COVERAGE_EXCLUDES" && \
+      for (( n=0; n < ${#EXCLUDES[*]}; n++)) do \
+        rm ""{{PROJECT_PATH}}"/target/classes/${EXCLUDES[n]//\./\/}.class"; \
+      done; \
+    fi
+
+    # generate report
+    rm -rf "{{TARGET_PATH}}"/{{EXPERIMENT}}/{{COVERAGE_DIR}}/html
+    mkdir -p "{{TARGET_PATH}}"/{{EXPERIMENT}}/{{COVERAGE_DIR}}/html
+    java -jar {{JACOCO}}/jacococli.jar \
+      report "{{TARGET_PATH}}"/{{EXPERIMENT}}/{{COVERAGE_DIR}}/coverage.exec \
+      --classfiles "{{TARGET_PATH}}"/classes \
+      --html "{{TARGET_PATH}}"/{{EXPERIMENT}}/{{COVERAGE_DIR}}/html
+
+    rm -rf "{{TARGET_PATH}}"/classes
+
+# Record coverage on seed corpus
+coverage_seed: (prepare_corpus "seed") (coverage "seed")
+
+# Record coverage on fuzzing without seed corpus
+coverage_fuzzing: (fuzz "fuzzing") (coverage "fuzzing")
+
+# Record coverage on fuzzing with seed corpus
+coverage_fuzzing_seed: (prepare_corpus "fuzzing_seed") (fuzz "fuzzing_seed") (coverage "fuzzing_seed")
+
+[private]
+static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
+    mkdir -p "{{TARGET_PATH}}/staticcg" "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/" "{{PROJECT_PATH}}/resources/"
+    touch "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/log.txt"
+    docker rm -f {{STATICCG_CONTAINER}}
+    docker run -it \
+        --name {{STATICCG_CONTAINER}} \
+        --mount=type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
+        --mount=type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
+        --mount=type=bind,source="{{PROJECT_PATH}}/jcg.conf",target=/jcg-conf/$PROJECT.conf,readonly \
+        --mount=type=bind,source="{{TARGET_PATH}}/staticcg",target=/staticcg \
+        --mount=type=bind,source="{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/log.txt",target=/log.txt \
+        jcg \
+        {{STATICCG_TIMEOUT}} \
+        {{STATICCG_MEMORY}} \
+        runMain Evaluation \
+        --input /jcg-conf/ \
+        --output /staticcg \
+        --adapter {{FRAMEWORK}} \
+        --algorithm-prefix {{ALGO}} \
+        --project-prefix $PROJECT \
+        --zip \
+        --debug
+
+
