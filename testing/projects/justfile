@@ -53,7 +53,7 @@ build_jcg_image:
     docker build -t jcg -f {{BASE_DIR}}/jcg/Dockerfile {{BASE_DIR}}/jcg
 
 # Recipe to build project JAR
-build_jar:
+build_jar: build_jazzer_image
     if [ ! -d "{{BASE_DIR}}/projects/${PROJECT}" ]; then echo "Project ${PROJECT} not found in {{DATA}}"; exit 1; fi
     mkdir -p "{{TARGET_PATH}}"
     cd ${PROJECT}
