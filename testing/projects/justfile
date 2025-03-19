@@ -11,8 +11,8 @@ PROJECT_PATH := DATA / PROJECT
 TARGET_PATH := PROJECT_PATH / "target"
 
 # Define DATA directory (change to your desired location)
-export DATA :=  env_var("DATA")
-export CORPUS := env_var("CORPUS")
+export DATA := '/home/iloverolexesmore/fuzzing_callgraph/fuzzing_data/'
+export CORPUS := '/home/iloverolexesmore/total_recall_artifact/fuzzing-corpora/'
 
 # Fuzzing parameters
 FUZZER := env_var("FUZZER")
