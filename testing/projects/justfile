@@ -90,7 +90,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
         --mount type=bind,source="{{PROJECT_PATH}}/resources",target=/resources/,readonly \
         --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing-coverage/coverage.exec",target=/fuzzing/coverage.exec \
         --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file",target=/fuzzing/sync_file \
-        --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/dict.txt,target=/fuzzing/dict.txt,readonly \
+        --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/dict.txt,target=/dict.txt,readonly \
         jazzer \
         --cp=$(find "{{TARGET_PATH}}"/repo -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
         --target_class={{FUZZER}} \
