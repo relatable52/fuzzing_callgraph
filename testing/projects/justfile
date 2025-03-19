@@ -11,8 +11,8 @@ PROJECT_PATH := DATA / PROJECT
 TARGET_PATH := PROJECT_PATH / "target"
 
 # Define DATA directory (change to your desired location)
-export DATA :=  BASE_DIR / "fuzzing_data"
-export CORPUS := BASE_DIR / "fuzzing_corpora"
+export DATA :=  env_var("DATA")
+export CORPUS := env_var("CORPUS")
 
 # Fuzzing parameters
 FUZZER := env_var("FUZZER")
