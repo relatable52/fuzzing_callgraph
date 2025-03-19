@@ -7,10 +7,7 @@ WORKDIR /build/commons-jxpath
 ENV MAVEN_ARGS="-Djavac.src.version=15 -Djavac.target.version=15 -DskipTests"
 RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 
-RUN ls src/main/java
-RUN mkdir -p /classes && find src/main/java -name "*.java" > sources.txt && javac -d /classes @sources.txt
-
-RUN mkdir -p /repo && cp /build/commons-jxpath/target/*.jar /repo/
+RUN mkdir -p /repo && cp /build/commons-jxpath/target/*.jar /repo/ && cp /build/commons-jxpath/target/classes /classes/
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 
