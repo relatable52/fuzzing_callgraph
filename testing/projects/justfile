@@ -7,8 +7,8 @@ export DOCKER_BUILDKIT := "1"
 # Define project paths
 export BASE_DIR := absolute_path("../")
 PROJECT := env_var("PROJECT")
-PROJECT_PATH := DATA / PROJECT
-TARGET_PATH := PROJECT_PATH / "target"
+export PROJECT_PATH := DATA / PROJECT
+export TARGET_PATH := PROJECT_PATH / "target"
 
 # Define DATA directory (change to your desired location)
 export DATA := '/home/iloverolexesmore/fuzzing_callgraph/fuzzing_data'
@@ -119,7 +119,7 @@ coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT
         --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/corpus,target=/corpus,readonly \
         --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage/coverage.exec,target=/coverage/coverage.exec \
         jazzer \
-        --cp=$(find "$TPROJECT_PATH/repo" -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
+        --cp=$(find "$PROJECT_PATH/repo" -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
         --target_class={{FUZZER}}\
         --instrumentation_includes=$INSTRUMENT_CLASSES \
         --disabled_hooks={{DISABLED_HOOKS}} \
