@@ -123,7 +123,7 @@ coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT
         --target_class={{FUZZER}} \
         --instrumentation_includes=$INSTRUMENT_CLASSES \
         --disabled_hooks={{DISABLED_HOOKS}} \
-        --jvm_args="-javaagent:/jacocoagent.jar=destfile=coverage/coverage.exec" \
+        --jvm_args="-javaagent\\:/jacocoagent.jar=destfile=/coverage/coverage.exec" \
         -rss_limit_mb=8182 \
         -runs=0 \
         corpus 
