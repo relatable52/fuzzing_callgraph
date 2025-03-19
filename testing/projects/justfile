@@ -93,7 +93,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
         --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/dict.txt,target=/fuzzing/dict.txt,readonly \
         jazzer \
         --cp=$(find "{{TARGET_PATH}}"/repo -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
-        --target_class={{FUZZER}}\
+        --target_class={{FUZZER}} \
         --instrumentation_includes=$INSTRUMENT_CLASSES \
         --disabled_hooks={{DISABLED_HOOKS}} \
         --id_sync_file=/fuzzing/sync_file \
@@ -113,14 +113,14 @@ coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT
     docker rm -f {{COVERAGE_CONTAINER}}
     docker run -it \
         --name {{COVERAGE_CONTAINER}} \
-        --mount type=bind,source="{{TARGET_PATH}}"/repo,target=/repo,readonly \
-        --mount type=bind,source="{{PROJECT_PATH}}"/resources/,target=/resources/,readonly \
-        --mount type=bind,source={{JACOCO}}/jacocoagent.jar,target=/jacocoagent.jar,readonly \
-        --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/corpus,target=/corpus,readonly \
-        --mount type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage/coverage.exec,target=/coverage/coverage.exec \
+        --mount type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
+        --mount type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
+        --mount type=bind,source="{{JACOCO}}/jacocoagent.jar",target=/jacocoagent.jar,readonly \
+        --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/corpus",target=/corpus,readonly \
+        --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/coverage/coverage.exec",target=/coverage/coverage.exec \
         jazzer \
-        --cp=$(find "{{TARGET_PATH}}"/repo -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
-        --target_class={{FUZZER}}\
+        --cp=$(find "{{TARGET_PATH}}/repo" -name '*.jar' -type f -printf '/repo/%f '  | xargs echo | tr ' ' ':') \
+        --target_class={{FUZZER}} \
         --instrumentation_includes=$INSTRUMENT_CLASSES \
         --disabled_hooks={{DISABLED_HOOKS}} \
         --jvm_args="-javaagent:/jacocoagent.jar=destfile=coverage/coverage.exec" \
