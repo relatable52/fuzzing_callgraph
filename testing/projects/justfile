@@ -6,16 +6,16 @@ export DOCKER_BUILDKIT := "1"
 
 # Define project paths
 export BASE_DIR := absolute_path("../")
-PROJECT := ${PROJECT}
-PROJECT_PATH := "{{DATA}}/${PROJECT}"
-TARGET_PATH := "{{PROJECT_PATH}}/target"
+PROJECT := env_var("PROJECT")
+PROJECT_PATH := DATA / PROJECT
+TARGET_PATH := PROJECT_PATH / "target"
 
 # Define DATA directory (change to your desired location)
 export DATA :=  BASE_DIR / "fuzzing_data"
 export CORPUS := BASE_DIR / "fuzzing_corpora"
 
 # Fuzzing parameters
-FUZZER := ${FUZZER}
+FUZZER := env_var("FUZZER")
 FUZZING_THREADS := "2"
 FUZZING_TIME := "120"
 
