@@ -109,6 +109,6 @@ COPY jre.conf $JCG_DIR/jre.conf
 
 WORKDIR $JCG_DIR
 
-COPY entrypoint.sh /entrypoint.sh
-RUN sudo chmod a+x /entrypoint.sh
-ENTRYPOINT [ "/entrypoint.sh" ]
+COPY entrypoint.sh entrypoint.sh
+RUN sudo chmod a+x entrypoint.sh
+ENTRYPOINT [ "./entrypoint.sh" ]
