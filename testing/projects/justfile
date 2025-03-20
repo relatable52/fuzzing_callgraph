@@ -183,5 +183,16 @@ static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
         --zip \
         --debug
 
+[private]
+opal_callgraphs: (static_callgraph "OPAL" "CHA") (static_callgraph "OPAL" "RTA") (static_callgraph "OPAL" "0-CFA")
+[private]
+wala_callgraphs: (static_callgraph "WALA" "CHA") (static_callgraph "WALA" "RTA") (static_callgraph "WALA" "0-CFA")
+[private]
+soot_callgraphs: (static_callgraph "Soot" "CHA")
+[private]
+doop_callgraphs: (static_callgraph "Doop" "context-insensitive")
+
+static_callgraphs: opal_callgraphs wala_callgraphs soot_callgraphs doop_callgraphs
+
 test:
     echo {{PROJECT_PATH}}
