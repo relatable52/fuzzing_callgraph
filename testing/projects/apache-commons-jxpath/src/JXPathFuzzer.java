@@ -42,9 +42,7 @@ public class JXPathFuzzer {
     }
 
     public static void main(String[] args) {
-        byte[] sampleInput = new byte[0]; 
-
-        FuzzedDataProvider dataProvider = new CannedFuzzedDataProvider(sampleInput);
+        FuzzedDataProvider dataProvider = new CannedFuzzedDataProvider("");
 
         JXPathFuzzer.fuzzerTestOneInput(dataProvider);
     }
