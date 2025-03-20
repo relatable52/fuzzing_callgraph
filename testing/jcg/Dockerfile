@@ -111,3 +111,4 @@ WORKDIR $JCG_DIR
 
 COPY entrypoint.sh /entrypoint.sh
 RUN sudo chmod a+x /entrypoint.sh
+ENTRYPOINT [ "/entrypoint.sh" ]
