@@ -12,7 +12,7 @@ RUN OLD_GROUP=$(awk -F\: "\$3 == ${GID} {print \$1}" /etc/group); if [ ! -z "$OL
 
 # Add user and group
 RUN addgroup --gid ${GID} ${GROUP}
-RUN adduser --uid ${UID} -G ${GROUP} --shell /bin/sh -D ${USER}
+RUN adduser --uid ${UID} --gid ${GID} --shell /bin/sh --disabled-password ${USER}
 
 # Switch to user
 USER ${UID}:${GID}
