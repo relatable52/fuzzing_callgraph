@@ -9,7 +9,7 @@ ARG GID=100
 # Delete user and group to ensure they do not exist
 RUN OLD_USER=$(awk -F\: "\$3 == ${UID} {print \$1}" /etc/passwd); if [ ! -z "$OLD_USER" ]; then echo "delete user $OLD_USER"; deluser $OLD_USER; fi
 RUN OLD_GROUP=$(awk -F\: "\$3 == ${GID} {print \$1}" /etc/group); if [ ! -z "$OLD_GROUP" ]; then echo "delete group $OLD_GROUP"; delgroup $OLD_GROUP; fi
-RUN delgroup $GROUP
+RUN if getent group $GROUP >/dev/null; then delgroup $GROUP; fi
 # Add user and group
 RUN addgroup --gid ${GID} ${GROUP}
 RUN adduser --force-badname --uid ${UID} --gid ${GID} --shell /bin/sh ${USER}
