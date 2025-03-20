@@ -90,7 +90,7 @@ ARG DOOP_COMMIT_ID="fa1cfd2"
 ARG DOOP_BRANCH="master"
 ARG DOOP_DIR="/home/$USER/doop"
 ENV DOOP_HOME="$DOOP_DIR"
-RUN git clone https://bitbucket.org/yanniss/doop.git $DOOP_DIR && \
+RUN git clone https://github.com/plast-lab/doop.git $DOOP_DIR && \
     cd $DOOP_DIR && \
     git checkout ${DOOP_BRANCH} && \
     git reset --hard ${DOOP_COMMIT_ID} && \
