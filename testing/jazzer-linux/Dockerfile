@@ -14,10 +14,10 @@ RUN OLD_GROUP=$(awk -F\: "\$3 == ${GID} {print \$1}" /etc/group); if [ ! -z "$OL
 RUN addgroup --gid ${GID} ${GROUP}
 RUN adduser --uid ${UID} --gid ${GID} --shell /bin/sh --disabled-password ${USER}
 
+COPY . .
+RUN chmod +x jazzer
+
 # Switch to user
 USER ${UID}:${GID}
 
-COPY . .
-
-RUN chmod +x jazzer
 ENTRYPOINT ["./jazzer"]
