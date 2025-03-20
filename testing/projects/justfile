@@ -168,7 +168,7 @@ static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
         --name {{STATICCG_CONTAINER}} \
         --mount=type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
         --mount=type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
-        --mount=type=bind,source="{{BASE_DIR}}/{{PROJECT}}/jcg.conf",target=/jcg-conf/$PROJECT.conf,readonly \
+        --mount=type=bind,source="{{BASE_DIR}}/projects/{{PROJECT}}/jcg.conf",target=/jcg-conf/$PROJECT.conf,readonly \
         --mount=type=bind,source="{{TARGET_PATH}}/staticcg",target=/staticcg \
         --mount=type=bind,source="{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/log.txt",target=/log.txt \
         jcg \
