@@ -1,4 +1,5 @@
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
+import com.code_intelligence.jazzer.api.CannedFuzzedDataProvider;
 
 import java.io.StringReader;
 import java.io.IOException;
@@ -38,5 +39,13 @@ public class JXPathFuzzer {
             context.selectNodes(data.consumeRemainingAsString());
         } catch (JXPathException e) {
         }
+    }
+
+    public static void main(String[] args) {
+        byte[] sampleInput = new byte[0]; 
+
+        FuzzedDataProvider dataProvider = new CannedFuzzedDataProvider(sampleInput);
+
+        JXPathFuzzer.fuzzerTestOneInput(dataProvider);
     }
 }
