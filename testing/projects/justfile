@@ -228,21 +228,21 @@ static_callgraphs: opal_callgraphs wala_callgraphs soot_callgraphs doop_callgrap
 
 [private]
 clean_experiment EXPERIMENT:
-    rm -rf ""{{TARGET_PATH}}"/{{EXPERIMENT}}"
+    rm -rf "{{TARGET_PATH}}/{{EXPERIMENT}}"
 
 [private]
 clean_all_experiments: (clean_experiment "seed") (clean_experiment "fuzzing") (clean_experiment "fuzzing_seed")
 
 [private]
 clean_dyncg:
-    rm -rf ""{{TARGET_PATH}}"/"dyncg
+    rm -rf "{{TARGET_PATH}}/"dyncg
 
 [private]
 clean_staticcg:
-    rm -rf ""{{TARGET_PATH}}"/"staticcg
+    rm -rf "{{TARGET_PATH}}/"staticcg
 
 [private]
 clean_project_build:
-    rm -rf ""{{TARGET_PATH}}"/"repo
+    rm -rf "{{TARGET_PATH}}/"repo
 
 clean: clean_all_experiments clean_dyncg clean_staticcg
