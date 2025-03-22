@@ -171,7 +171,7 @@ dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
     docker run -it \
         --name {{DYNCG_CONTAINER}} \
         --mount=type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
-        --mount=type=bind,source="{{PROJECT_PATH}/resources/",target=/resources/,readonly \
+        --mount=type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
         --mount=type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/corpus",target=/corpus,readonly \
         --mount=type=bind,source="{{BASE_DIR}}/projects/{{PROJECT}}/jcg.conf,"target=/jcg-conf/$PROJECT.conf,readonly \
         --mount=type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg",target=/dyncg \
