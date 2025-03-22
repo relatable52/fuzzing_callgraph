@@ -47,6 +47,10 @@ DISABLED_HOOKS:= "com.code_intelligence.jazzer.sanitizers.ReflectiveCall:com.cod
 build_jazzer_image:
     docker build -t jazzer -f {{BASE_DIR}}/jazzer-linux/Dockerfile {{BASE_DIR}}/jazzer-linux
 
+[private]
+build_jazzer_input_parser:
+    docker build --tag=jazzer-input-parser "{{BASE_DIR}}"/jazzer_input_parser
+
 # Recipe to build JCG Docker image
 [private]
 build_jcg_image:
@@ -158,6 +162,10 @@ coverage_fuzzing: (fuzz "fuzzing") (coverage "fuzzing")
 
 # Record coverage on fuzzing with seed corpus
 coverage_fuzzing_seed: (prepare_corpus "fuzzing_seed") (fuzz "fuzzing_seed") (coverage "fuzzing_seed")
+
+[private]
+dynamic_callgraph EXPERIMENT: build_jar build_jazzer_image
+
 
 [private]
 static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
