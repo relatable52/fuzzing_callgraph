@@ -164,8 +164,32 @@ coverage_fuzzing: (fuzz "fuzzing") (coverage "fuzzing")
 coverage_fuzzing_seed: (prepare_corpus "fuzzing_seed") (fuzz "fuzzing_seed") (coverage "fuzzing_seed")
 
 [private]
-dynamic_callgraph EXPERIMENT: build_jar build_jazzer_image
+dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
+    mkdir -p "{{TARGET_PATH}}"/{{EXPERIMENT}}/dyncg "{{PROJECT_PATH}}"/resources/
+    touch "{{TARGET_PATH}}"/{{EXPERIMENT}}/dyncg/log.txt
+    docker rm -f {{DYNCG_CONTAINER}}
+    docker run -it \
+        --name {{DYNCG_CONTAINER}} \
+        --mount=type=bind,source="{{TARGET_PATH}}"/repo,target=/repo,readonly \
+        --mount=type=bind,source="{{PROJECT_PATH}}"/resources/,target=/resources/,readonly \
+        --mount=type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/corpus,target=/corpus,readonly \
+        --mount=type=bind,source="{{PROJECT_PATH}}"/jcg.conf,target=/jcg-conf/$PROJECT.conf,readonly \
+        --mount=type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/dyncg,target=/dyncg \
+        --mount=type=bind,source="{{TARGET_PATH}}"/{{EXPERIMENT}}/dyncg/log.txt,target=/log.txt \
+        jcg \
+        {{DYNCG_TIMEOUT}} \
+        {{DYNCG_MEMORY}} \
+        runMain Evaluation \
+        --input /jcg-conf/ \
+        --output /dyncg \
+        --program-args /corpus \
+        --adapter Dynamic \
+        --algorithm-prefix Dynamic \
+        --project-prefix $PROJECT \
+        --zip \
+        --debug
 
+dynamic_callgraph_fuzzing_seed: (dynamic_callgraph "fuzzing_seed")
 
 [private]
 static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
@@ -202,5 +226,23 @@ doop_callgraphs: (static_callgraph "Doop" "context-insensitive")
 
 static_callgraphs: opal_callgraphs wala_callgraphs soot_callgraphs doop_callgraphs
 
-test:
-    echo {{PROJECT_PATH}}
+[private]
+clean_experiment EXPERIMENT:
+    rm -rf ""{{TARGET_PATH}}"/{{EXPERIMENT}}"
+
+[private]
+clean_all_experiments: (clean_experiment "seed") (clean_experiment "fuzzing") (clean_experiment "fuzzing_seed")
+
+[private]
+clean_dyncg:
+    rm -rf ""{{TARGET_PATH}}"/"dyncg
+
+[private]
+clean_staticcg:
+    rm -rf ""{{TARGET_PATH}}"/"staticcg
+
+[private]
+clean_project_build:
+    rm -rf ""{{TARGET_PATH}}"/"repo
+
+clean: clean_all_experiments clean_dyncg clean_staticcg
