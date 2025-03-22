@@ -11,6 +11,7 @@ RUN mkdir -p /repo && cp /build/commons-jxpath/target/*.jar /repo/
 RUN cp -r /build/commons-jxpath/target/classes /classes
 
 COPY --from=jazzer jazzer-api-0.24.0.jar /repo/
+COPY --from=jazzer jazzer-0.24.0.jar /repo/
 COPY --from=jazzer jazzer-junit-0.24.0.jar /repo/
 
 RUN mkdir -p /build/fuzzer /build/fuzzer/target
