@@ -165,8 +165,8 @@ coverage_fuzzing_seed: (prepare_corpus "fuzzing_seed") (fuzz "fuzzing_seed") (co
 
 [private]
 dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
-    mkdir -p "{{TARGET_PATH}}"/{{EXPERIMENT}}/dyncg "{{PROJECT_PATH}}"/resources/
-    touch "{{TARGET_PATH}}"/{{EXPERIMENT}}/dyncg/log.txt
+    mkdir -p "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg" "{{PROJECT_PATH}}/resources/"
+    touch "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/log.txt"
     docker rm -f {{DYNCG_CONTAINER}}
     docker run -it \
         --name {{DYNCG_CONTAINER}} \
