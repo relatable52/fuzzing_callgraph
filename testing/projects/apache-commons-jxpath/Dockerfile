@@ -10,7 +10,7 @@ RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_A
 RUN mkdir -p /repo && cp /build/commons-jxpath/target/*.jar /repo/
 RUN cp -r /build/commons-jxpath/target/classes /classes
 
-COPY --from=jazzer jazzer-api-0.19.0.jar /repo/
+COPY --from=jazzer jazzer-0.24.0.jar /repo/
 
 RUN mkdir -p /build/fuzzer /build/fuzzer/target
 WORKDIR /build/fuzzer
