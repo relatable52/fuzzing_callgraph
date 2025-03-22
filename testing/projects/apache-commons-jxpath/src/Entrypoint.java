@@ -6,6 +6,7 @@ import java.nio.file.Path;
 
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import com.code_intelligence.jazzer.driver.FuzzedDataProviderImpl;
+import com.code_intelligence.jazzer.*;
 
 public class Entrypoint {
     public static void entrypoint(File inputFile) throws Exception {
