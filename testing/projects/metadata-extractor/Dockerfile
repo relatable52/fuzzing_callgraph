@@ -23,4 +23,3 @@ RUN --mount=type=bind,source=src/,target=src/ \
 FROM scratch
 COPY --from=builder /repo/ /repo/
 COPY --from=builder /classes/ /classes/
-COPY --from=builder /build/ /build
