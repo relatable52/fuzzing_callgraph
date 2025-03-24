@@ -14,7 +14,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.JXPathException;
 
-
 public class JXPathFuzzer {
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
         DocumentBuilder builder = null;

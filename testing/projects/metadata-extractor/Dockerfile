@@ -1,14 +1,14 @@
 FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
-RUN git clone https://github.com/apache/commons-jxpath.git
+RUN RUN git clone --depth 1 https://github.com/drewnoakes/metadata-extractor.git metadata-extractor
 
-WORKDIR /build/commons-jxpath
-ENV MAVEN_ARGS="-Djavac.src.version=15 -Djavac.target.version=15 -DskipTests"
-RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
+WORKDIR /build/metadata-extractor
+ENV MAVEN_ARGS="-Djavac.src.version=15 -Djavac.target.version=15 -Dmaven.javadoc.skip=true -DskipTests"
+RUN package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 
-RUN mkdir -p /repo && cp /build/commons-jxpath/target/*.jar /repo/
-RUN cp -r /build/commons-jxpath/target/classes /classes
+RUN mkdir -p /repo && cp /build/metadata-extractor/target/*.jar /repo/
+RUN cp -r /build/metadata-extractor/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 COPY --from=jazzer libunsafe_provider.jar /repo/
