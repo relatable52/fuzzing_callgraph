@@ -186,7 +186,6 @@ dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
         --adapter Dynamic \
         --algorithm-prefix Dynamic \
         --project-prefix $PROJECT \
-        --zip \
         --debug
 
 dynamic_callgraph_fuzzing_seed: (dynamic_callgraph "fuzzing_seed")
