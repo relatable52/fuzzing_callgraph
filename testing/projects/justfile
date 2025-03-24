@@ -212,7 +212,6 @@ static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
         --adapter {{FRAMEWORK}} \
         --algorithm-prefix {{ALGO}} \
         --project-prefix $PROJECT \
-        --zip \
         --debug
 
 [private]
