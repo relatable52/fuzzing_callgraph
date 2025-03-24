@@ -1,7 +1,7 @@
 FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
-RUN git clone --depth 1 https://github.com/drewnoakes/metadata-extractor.git metadata-extractor
+RUN git clone https://github.com/drewnoakes/metadata-extractor.git metadata-extractor
 
 WORKDIR /build/metadata-extractor
 ENV MAVEN_ARGS="-Djavac.src.version=15 -Djavac.target.version=15 -Dmaven.javadoc.skip=true -DskipTests"
