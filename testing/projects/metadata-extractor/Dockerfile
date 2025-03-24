@@ -4,7 +4,7 @@ WORKDIR /build
 RUN git clone https://github.com/drewnoakes/metadata-extractor.git metadata-extractor
 
 WORKDIR /build/metadata-extractor
-ENV MAVEN_ARGS="-Djavac.src.version=15 -Djavac.target.version=15 -Dmaven.javadoc.skip=true -DskipTests"
+ENV MAVEN_ARGS="-Djavac.src.version=15 -Djavac.target.version=15 -Dmaven.javadoc.skip=true -DskipTests -Dmaven.repo.local=/root/.m2"
 RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 
 RUN mkdir -p /repo && cp /build/metadata-extractor/target/*.jar /repo/
