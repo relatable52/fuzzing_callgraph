@@ -1,3 +1,3 @@
 DICT_DIR=$1
 
-touch $DICT_DIR/dict.txt
+cp  $CORPUS/go-fuzz-corpus-master/jpeg/jpeg.go $DICT_DIR/dict.text
