@@ -11,7 +11,7 @@ RUN mkdir -p /repo && cp /build/commons-jxpath/target/*.jar /repo/
 RUN cp -r /build/commons-jxpath/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
-COPY --from=jazzer libunsafe_provider-hjar.jar /repo/
+COPY --from=jazzer libunsafe_provider.jar /repo/
 
 RUN mkdir -p /build/fuzzer /build/fuzzer/target
 WORKDIR /build/fuzzer
