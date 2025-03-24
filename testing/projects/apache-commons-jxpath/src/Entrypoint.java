@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 import java.nio.file.Path;
 
 import com.code_intelligence.jazzer.api.FuzzedDataProvider;
-import com.code_intelligence.jazzer.runtime.FuzzedDataProviderImpl;
+import com.code_intelligence.jazzer.driver.FuzzedDataProviderImpl;
 import com.code_intelligence.jazzer.*;
 
 public class Entrypoint {
