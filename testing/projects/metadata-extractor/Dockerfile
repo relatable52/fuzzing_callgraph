@@ -7,8 +7,8 @@ WORKDIR /build/metadata-extractor
 ENV MAVEN_ARGS="-Djavac.src.version=15 -Djavac.target.version=15 -Dmaven.javadoc.skip=true -DskipTests -Dmaven.repo.local=/root/.m2"
 RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 
-RUN mkdir -p /repo && cp /build/metadata-extractor/Output/*.jar /repo/
-RUN cp -r /build/metadata-extractor/Output/classes /classes
+RUN mkdir -p /repo && cp /build/metadata-extractor/Output/maven/*.jar /repo/
+RUN cp -r /build/metadata-extractor/Output/maven/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 COPY --from=jazzer libunsafe_provider.jar /repo/
@@ -23,3 +23,4 @@ RUN --mount=type=bind,source=src/,target=src/ \
 FROM scratch
 COPY --from=builder /repo/ /repo/
 COPY --from=builder /classes/ /classes/
+COPY --from=builder /build/ /build/
