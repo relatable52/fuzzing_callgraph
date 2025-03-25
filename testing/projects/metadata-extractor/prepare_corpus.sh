@@ -16,5 +16,4 @@ find $CORPUS/fuzzing-corpus/bmp \
     $CORPUS/fuzzing-corpus/jpg \
     $CORPUS/fuzzing-corpus/png \
     $CORPUS/fuzzing-corpus/tiff \
-    $CORPUS/fuzzing-corpus/webp \
     -type d -name "go-fuzz" -prune -o -type f -exec cp {} "$CORPUS_DIR" \;
