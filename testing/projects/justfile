@@ -57,7 +57,7 @@ build_jcg_image:
 
 # Recipe to build project JAR
 build_jar: build_jazzer_image
-    if [ ! -d "{{BASE_DIR}}/projects/${PROJECT}" ]; then echo "Project ${PROJECT} not found in {{DATA}}"; exit 1; fi
+    if [ ! -d "{{BASE_DIR}}/projects/${PROJECT}" ]; then echo "Project ${PROJECT} not found"; exit 1; fi
     mkdir -p "{{TARGET_PATH}}"
     cd ${PROJECT}
     docker build --output="{{TARGET_PATH}}" -t ${PROJECT} -f ${PROJECT}/Dockerfile ${PROJECT}
@@ -84,6 +84,9 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
     "{{TARGET_PATH}}/{{EXPERIMENT}}/corpus"
 
     touch "{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file" \
+    "{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing_coverage/coverage.exec" \
+
+    chmod 777 "{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file" \
     "{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing_coverage/coverage.exec" \
 
     # Run fuzzer
@@ -113,6 +116,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
 coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT "coverage" "false")
     mkdir -p "{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage "{{PROJECT_PATH}}"/resources
     touch "{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage/coverage.exec
+    chmod 777 "{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage/coverage.exec
 
     # record coverage
     docker rm -f {{COVERAGE_CONTAINER}}
@@ -168,6 +172,8 @@ coverage_fuzzing_seed: (prepare_corpus "fuzzing_seed") (fuzz "fuzzing_seed") (co
 dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
     mkdir -p "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg" "{{PROJECT_PATH}}/resources/"
     touch "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/log.txt"
+    chmod 777 "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/log.txt"
+
     docker rm -f {{DYNCG_CONTAINER}}
     docker run -it \
         --name {{DYNCG_CONTAINER}} \
@@ -195,6 +201,8 @@ dynamic_callgraph_fuzzing_seed: (dynamic_callgraph "fuzzing_seed")
 static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
     mkdir -p "{{TARGET_PATH}}/staticcg" "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/" "{{PROJECT_PATH}}/resources/"
     touch "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/log.txt"
+    chmod 777 "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/log.txt"
+
     docker rm -f {{STATICCG_CONTAINER}}
     docker run -it \
         --name {{STATICCG_CONTAINER}} \
