@@ -247,4 +247,7 @@ clean_project_build:
 
 clean: clean_all_experiments clean_dyncg clean_staticcg
 
-run_complete: coverage_seed coverage_fuzzing coverage_fuzzing_seed dynamic_callgraph_fuzzing_seed static_callgraphs
+run_complete: coverage_seed static_callgraphs
+    for i in $(seq 1 3); do just --dotenv-path .env coverage_fuzzing; done
+    for i in $(seq 1 7); do just --dotenv-path .env coverage_fuzzing_seed; done
+    just --dotenv-path .env dynamic_callgraph_fuzzing_seed
