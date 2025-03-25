@@ -31,6 +31,8 @@ public class ImageMetadataReaderFuzzer {
             Metadata metadata = ImageMetadataReader.readMetadata(input);
         } catch (IOException | ImageProcessingException e) {
             return;
+        } catch (Exception e) {
+            return;
         }
 
     }

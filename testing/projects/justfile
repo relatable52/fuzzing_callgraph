@@ -34,7 +34,6 @@ COMPARECG_CONTAINER := "comparecg-" + PROJECT
 
 # Libraries
 JACOCO := BASE_DIR / "lib/jacoco"
-JAVA_CALLGRAPH := BASE_DIR / "lib/java-callgraph"
 
 UID := `id -u`
 GID := `id -g`
