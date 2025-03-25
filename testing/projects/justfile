@@ -16,8 +16,8 @@ export CORPUS := env_var("CORPUS")
 
 # Fuzzing parameters
 FUZZER := env_var("FUZZER")
-FUZZING_THREADS := "2"
-FUZZING_TIME := "120"
+FUZZING_THREADS := "8"
+FUZZING_TIME := "3600"
 
 # Static callgraph parameters
 DYNCG_TIMEOUT := "999m"
@@ -105,7 +105,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
         -max_total_time={{FUZZING_TIME}} \
         -fork={{FUZZING_THREADS}} \
         -max_len=100000 \
-        -timeout=3600 \
+        -timeout=60 \
         -dict=dict.txt \
         corpus
 
