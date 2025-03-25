@@ -21,9 +21,9 @@ FUZZING_TIME := "120"
 
 # Static callgraph parameters
 DYNCG_TIMEOUT := "999m"
-DYNCG_MEMORY := "10G"
+DYNCG_MEMORY := "128G"
 STATICCG_TIMEOUT := "180m"
-STATICCG_MEMORY := "10G"
+STATICCG_MEMORY := "128G"
 
 # Containers
 FUZZING_CONTAINER := "fuzz-" + PROJECT
@@ -104,7 +104,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
         -max_total_time={{FUZZING_TIME}} \
         -fork={{FUZZING_THREADS}} \
         -max_len=100000 \
-        -timeout=60 \
+        -timeout=3600 \
         -dict=dict.txt \
         corpus
 
@@ -222,7 +222,7 @@ soot_callgraphs: (static_callgraph "Soot" "CHA")
 [private]
 doop_callgraphs: (static_callgraph "Doop" "context-insensitive")
 
-static_callgraphs: opal_callgraphs wala_callgraphs soot_callgraphs doop_callgraphs
+static_callgraphs: opal_callgraphs wala_callgraphs soot_callgraphs
 
 [private]
 clean_experiment EXPERIMENT:
@@ -245,3 +245,5 @@ clean_project_build:
     rm -rf "{{TARGET_PATH}}/classes"
 
 clean: clean_all_experiments clean_dyncg clean_staticcg
+
+run_complete: coverage_seed coverage_fuzzing coverage_fuzzing_seed dynamic_callgraph_fuzzing_seed static_callgraphs
