@@ -1,3 +1,5 @@
 DICT_DIR=$1
 
-cp -r $CORPUS/xml/dict.txt $DICT_DIR/dict.txt
+mkdir -p "$DICT_DIR"
+
+cp -r $CORPUS/fuzzing-corpus/dictionaries/xml.dict $DICT_DIR/dict.txt
