@@ -67,12 +67,14 @@ build_jar: build_jazzer_image
 prepare_dictionary EXPERIMENT: 
     mkdir -p {{TARGET_PATH}}/{{EXPERIMENT}}
 
+    chmod +x "{{BASE_DIR}}/projects/{{PROJECT}}/prepare_dictionary.sh"
     "{{BASE_DIR}}/projects/{{PROJECT}}/prepare_dictionary.sh" {{TARGET_PATH}}/{{EXPERIMENT}}
 
 [private]
 prepare_corpus EXPERIMENT:
     mkdir -p {{TARGET_PATH}}/{{EXPERIMENT}}/corpus
 
+    chmod +x "{{BASE_DIR}}/projects/{{PROJECT}}/prepare_corpus.sh"
     "{{BASE_DIR}}/projects/{{PROJECT}}/prepare_corpus.sh" {{TARGET_PATH}}/{{EXPERIMENT}}/corpus
 
 # Recipe to fuzz project
