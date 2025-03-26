@@ -91,7 +91,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
 
     # Run fuzzer
     docker rm -f "{{FUZZING_CONTAINER}}"
-    docker run -it \
+    docker run -i \
         --name "{{FUZZING_CONTAINER}}" \
         --mount type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
         --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/corpus",target=/corpus \
@@ -120,7 +120,7 @@ coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT
 
     # record coverage
     docker rm -f {{COVERAGE_CONTAINER}}
-    docker run -it \
+    docker run -i \
         --name {{COVERAGE_CONTAINER}} \
         --mount type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
         --mount type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
@@ -176,7 +176,7 @@ dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
 
     # Run dynamic callgraph
     docker rm -f {{DYNCG_CONTAINER}}
-    docker run -it \
+    docker run -i \
         --name {{DYNCG_CONTAINER}} \
         --mount=type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
         --mount=type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
@@ -206,7 +206,7 @@ static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
 
     # Run static callgraph
     docker rm -f {{STATICCG_CONTAINER}}
-    docker run -it \
+    docker run -i \
         --name {{STATICCG_CONTAINER}} \
         --mount=type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
         --mount=type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
