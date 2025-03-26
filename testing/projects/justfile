@@ -91,7 +91,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
 
     # Run fuzzer
     docker rm -f "{{FUZZING_CONTAINER}}"
-    docker run -i \
+    docker run -it \
         --name "{{FUZZING_CONTAINER}}" \
         --mount type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
         --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/corpus",target=/corpus \
@@ -120,7 +120,7 @@ coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT
 
     # record coverage
     docker rm -f {{COVERAGE_CONTAINER}}
-    docker run -i \
+    docker run -it \
         --name {{COVERAGE_CONTAINER}} \
         --mount type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
         --mount type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
@@ -176,7 +176,7 @@ dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
 
     # Run dynamic callgraph
     docker rm -f {{DYNCG_CONTAINER}}
-    docker run -i \
+    docker run -it \
         --name {{DYNCG_CONTAINER}} \
         --mount=type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
         --mount=type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
@@ -206,7 +206,7 @@ static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
 
     # Run static callgraph
     docker rm -f {{STATICCG_CONTAINER}}
-    docker run -i \
+    docker run -it \
         --name {{STATICCG_CONTAINER}} \
         --mount=type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
         --mount=type=bind,source="{{PROJECT_PATH}}/resources/",target=/resources/,readonly \
@@ -237,25 +237,22 @@ static_callgraphs: opal_callgraphs wala_callgraphs soot_callgraphs
 
 [private]
 clean_experiment EXPERIMENT:
-    docker rm -f remove
-    docker run --name remove -v "{{TARGET_PATH}}/{{EXPERIMENT}}":/data busybox rm -rf /data
+    rm -rf "{{TARGET_PATH}}/{{EXPERIMENT}}"
 
 [private]
 clean_all_experiments: (clean_experiment "seed") (clean_experiment "fuzzing") (clean_experiment "fuzzing_seed")
 
 [private]
 clean_dyncg:
-    docker rm -f remove
-    docker run --name remove -v "{{TARGET_PATH}}/fuzzing_seed/dyncg":/data busybox rm -rf /data
+    rm -rf "{{TARGET_PATH}}/fuzzing_seed/dyncg"
 
 [private]
 clean_staticcg:
-    docker rm -f remove
-    docker run --name remove -v "{{TARGET_PATH}}/staticcg":/data busybox rm -rf /data
+    rm -rf "{{TARGET_PATH}}/staticcg"
 
 [private]
 clean_project_build:
-    docker rm -f remove
-    docker run --name remove -v "{{TARGET_PATH}}/repo":/data/repo -v "{{TARGET_PATH}}/classes":/data/classes busybox rm -rf /data/repo /data/classes
+    rm -rf "{{TARGET_PATH}}/repo"
+    rm -rf "{{TARGET_PATH}}/classes"
 
 clean: clean_all_experiments clean_dyncg clean_staticcg
