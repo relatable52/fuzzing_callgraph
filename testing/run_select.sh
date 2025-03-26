@@ -1,0 +1,6 @@
+while read program; do \
+    just \
+    --justfile projects/justfile \
+    --dotenv-path projects/$program/.env \
+    run_complete; \
+done < projects/to_run.txt
