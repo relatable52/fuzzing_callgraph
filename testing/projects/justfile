@@ -4,15 +4,15 @@ set shell := ["bash", "-uc"]
 # Export DOCKER_BUILDKIT
 export DOCKER_BUILDKIT := "1"
 
+# Define data directory (change to your desired location)
+export CALLGRAPH:= env_var("CALLGRAPH")
+export CORPUS := env_var("CORPUS")
+
 # Define project paths
 export BASE_DIR := absolute_path("../")
 PROJECT := env_var("PROJECT")
-export PROJECT_PATH := DATA / PROJECT
+export PROJECT_PATH := CALLGRAPH / PROJECT
 export TARGET_PATH := PROJECT_PATH / "target"
-
-# Define DATA directory (change to your desired location)
-export DATA := env_var("DATA")
-export CORPUS := env_var("CORPUS")
 
 # Fuzzing parameters
 FUZZER := env_var("FUZZER")
