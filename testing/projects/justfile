@@ -255,4 +255,5 @@ clean_project_build:
     rm -rf "{{TARGET_PATH}}/repo"
     rm -rf "{{TARGET_PATH}}/classes"
 
-clean: clean_all_experiments clean_dyncg clean_staticcg
+clean:
+    docker run --rm -v "{{TARGET_PATH}}":/data busybox rm -rf /data
