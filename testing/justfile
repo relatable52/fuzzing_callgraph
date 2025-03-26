@@ -6,5 +6,5 @@ run_select:
     while read program; do \
         just \
         --dotenv-path "$program/.env"\
-        projects/run_complete; \
+        projects/build_jar; \
     done < projects/to_run.txt
