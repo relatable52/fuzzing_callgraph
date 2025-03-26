@@ -20,6 +20,5 @@ run_select:
         [[ -z "$program" ]] && continue
 
         # Run the just command
-        echo "Running: just --dotenv-path \"$program/.env\" projects/build_jar"
-        just --dotenv-path "$program/.env" projects/build_jar
+        just --dotenv-path "$program/.env" projects/run_complete
     done < "$TO_RUN"
