@@ -256,5 +256,3 @@ clean_project_build:
     rm -rf "{{TARGET_PATH}}/classes"
 
 clean: clean_all_experiments clean_dyncg clean_staticcg
-
-run_complete: coverage_seed
