@@ -2,6 +2,7 @@ set dotenv-load := true
 set shell := ["bash", "-uc"]
 
 run_select:
+    pwd
     while read program; do \
         just \
         --justfile projects/justfile \
