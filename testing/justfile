@@ -1,4 +1,3 @@
-set dotenv-load := true
 set shell := ["bash", "-uc"]
 
 run_select:
