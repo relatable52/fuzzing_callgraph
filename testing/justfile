@@ -10,4 +10,4 @@ run_select:
     done < projects/to_run.txt
 
 run_complete:
-    just --dotenv-path ./projects/apache-commons-jxpath/.env projects/build_jar
+    just --dotenv-path apache-commons-jxpath/.env projects/build_jar
