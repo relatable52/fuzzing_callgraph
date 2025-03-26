@@ -8,3 +8,6 @@ run_select:
         --dotenv-path ./projects/$program/.env \
         projects/run_complete; \
     done < projects/to_run.txt
+
+run_complete
+    just --dotenv-path ./projects/apache-commons-jxpath/.env build_jar
