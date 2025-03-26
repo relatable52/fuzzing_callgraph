@@ -27,12 +27,12 @@ public class JXPathFuzzer {
                 builder = factory.newDocumentBuilder();
             } catch (Exception parserConfigurationException) {
             }
-    
+
             try {
                 doc = builder.parse(new InputSource(new StringReader(data.consumeString(2000))));
             } catch (SAXException | IOException e) {
             }
-    
+
             JXPathContext context = JXPathContext.newContext(doc);
             try {
                 context.selectNodes(data.consumeRemainingAsString());

@@ -172,7 +172,7 @@ coverage_fuzzing_seed: (prepare_corpus "fuzzing_seed") (fuzz "fuzzing_seed") (co
 dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
     mkdir -p "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg" "{{PROJECT_PATH}}/resources/"
     touch "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/log.txt"
-    chmod 777 "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/log.txt"
+    chmod 777 "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/"
 
     docker rm -f {{DYNCG_CONTAINER}}
     docker run -it \
@@ -201,7 +201,7 @@ dynamic_callgraph_fuzzing_seed: (dynamic_callgraph "fuzzing_seed")
 static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
     mkdir -p "{{TARGET_PATH}}/staticcg" "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/" "{{PROJECT_PATH}}/resources/"
     touch "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/log.txt"
-    chmod 777 "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/log.txt"
+    chmod 777 "{{TARGET_PATH}}/staticcg"
 
     docker rm -f {{STATICCG_CONTAINER}}
     docker run -it \
