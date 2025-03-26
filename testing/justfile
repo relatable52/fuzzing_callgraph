@@ -1,0 +1,9 @@
+set shell := ["bash", "-uc"]
+
+run_select:
+    while read program; do \
+        just \
+        --justfile projects/$program/justfile \
+        --dotenv_path projects/$program/.env \
+        run_complete; \
+    done < projects/to_run.txt
