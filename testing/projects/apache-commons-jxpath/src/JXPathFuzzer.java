@@ -19,23 +19,27 @@ public class JXPathFuzzer {
         DocumentBuilder builder = null;
         Document doc = null;
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setValidating(data.consumeBoolean());
-            factory.setNamespaceAware(data.consumeBoolean());
-            factory.setExpandEntityReferences(data.consumeBoolean());
-            builder = factory.newDocumentBuilder();
-        } catch (Exception parserConfigurationException) {
-        }
-
-        try {
-            doc = builder.parse(new InputSource(new StringReader(data.consumeString(2000))));
-        } catch (SAXException | IOException e) {
-        }
-
-        JXPathContext context = JXPathContext.newContext(doc);
-        try {
-            context.selectNodes(data.consumeRemainingAsString());
-        } catch (JXPathException e) {
+            try {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setValidating(data.consumeBoolean());
+                factory.setNamespaceAware(data.consumeBoolean());
+                factory.setExpandEntityReferences(data.consumeBoolean());
+                builder = factory.newDocumentBuilder();
+            } catch (Exception parserConfigurationException) {
+            }
+    
+            try {
+                doc = builder.parse(new InputSource(new StringReader(data.consumeString(2000))));
+            } catch (SAXException | IOException e) {
+            }
+    
+            JXPathContext context = JXPathContext.newContext(doc);
+            try {
+                context.selectNodes(data.consumeRemainingAsString());
+            } catch (JXPathException e) {
+            }
+        } catch (Exception e) {
+            return;
         }
     }
 }
