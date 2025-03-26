@@ -237,22 +237,25 @@ static_callgraphs: opal_callgraphs wala_callgraphs soot_callgraphs
 
 [private]
 clean_experiment EXPERIMENT:
-    rm -rf "{{TARGET_PATH}}/{{EXPERIMENT}}"
+    docker rm -f remove
+    docker run --name remove -v "{{TARGET_PATH}}/{{EXPERIMENT}}":/data busybox rm -rf /data
 
 [private]
 clean_all_experiments: (clean_experiment "seed") (clean_experiment "fuzzing") (clean_experiment "fuzzing_seed")
 
 [private]
 clean_dyncg:
-    rm -rf "{{TARGET_PATH}}/dyncg"
+    docker rm -f remove
+    docker run --name remove -v "{{TARGET_PATH}}/fuzzing_seed/dyncg":/data busybox rm -rf /data
 
 [private]
 clean_staticcg:
-    rm -rf "{{TARGET_PATH}}/staticcg"
+    docker rm -f remove
+    docker run --name remove -v "{{TARGET_PATH}}/staticcg":/data busybox rm -rf /data
 
 [private]
 clean_project_build:
-    rm -rf "{{TARGET_PATH}}/repo"
-    rm -rf "{{TARGET_PATH}}/classes"
+    docker rm -f remove
+    docker run --name remove -v "{{TARGET_PATH}}/repo":/data/repo -v "{{TARGET_PATH}}/classes":/data/classes busybox rm -rf /data/repo /data/classes
 
 clean: clean_all_experiments clean_dyncg clean_staticcg
