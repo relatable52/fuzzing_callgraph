@@ -27,5 +27,5 @@ while IFS= read -r program || [[ -n "$program" ]]; do
     # # Run fuzzing_seed 12 times
     # for i in {1..12}; do
     #     just --dotenv-path "$program/.env" projects/coverage_fuzzing_seed
-    done
+    # done
 done <"$TO_RUN"
