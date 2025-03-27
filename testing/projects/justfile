@@ -86,9 +86,9 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
     touch "{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file" \
     "{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing_coverage/coverage.exec" \
 
-    docker run --rm busybox chmod -R 777 "{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file" \
-    "{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing_coverage/coverage.exec" \
-    "{{TARGET_PATH}}/{{EXPERIMENT}}/corpus"
+    docker run --rm -v "{{TARGET_PATH}}/{{EXPERIMENT}}":/data busybox chmod -R 777 "/data/sync_file" \
+    "/data/fuzzing_coverage/coverage.exec" \
+    "/data/corpus"
 
     # Run fuzzer
     docker rm -f "{{FUZZING_CONTAINER}}"
@@ -117,7 +117,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
 coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT "coverage" "false")
     mkdir -p "{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage "{{PROJECT_PATH}}"/resources
     touch "{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage/coverage.exec
-    docker run --rm busybox chmod -R 777 "{{TARGET_PATH}}"/{{EXPERIMENT}}/
+    docker run --rm -v "{{TARGET_PATH}}/{{EXPERIMENT}}":/data busybox chmod -R 777 /data
 
     # record coverage
     docker rm -f {{COVERAGE_CONTAINER}}
@@ -173,7 +173,7 @@ coverage_fuzzing_seed: (prepare_corpus "fuzzing_seed") (fuzz "fuzzing_seed") (co
 dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
     mkdir -p "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg" "{{PROJECT_PATH}}/resources/"
     touch "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/log.txt"
-    docker run --rm busybox chmod -R 777 "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/"
+    docker run --rm -v "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/":/data busybox chmod -R 777 /data
 
     # Run dynamic callgraph
     docker rm -f {{DYNCG_CONTAINER}}
@@ -203,7 +203,7 @@ dynamic_callgraph_fuzzing_seed: (dynamic_callgraph "fuzzing_seed")
 static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
     mkdir -p "{{TARGET_PATH}}/staticcg" "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/" "{{PROJECT_PATH}}/resources/"
     touch "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/log.txt"
-    docker run --rm busybox chmod -R 777 "{{TARGET_PATH}}/staticcg/"
+    docker run --rm -v "{{TARGET_PATH}}":/data busybox chmod -R 777 /data/staticcg/
 
     # Run static callgraph
     docker rm -f {{STATICCG_CONTAINER}}
@@ -254,6 +254,6 @@ clean_staticcg:
 [private]
 clean_project_build:
     docker run --rm -v "{{TARGET_PATH}}":/data busybox rm -rf /data/repo /data/classes
-    
+
 clean:
     docker run --rm -v "{{TARGET_PATH}}":/data busybox rm -rf /data
