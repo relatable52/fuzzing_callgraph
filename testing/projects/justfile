@@ -86,8 +86,9 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
     touch "{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file" \
     "{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing_coverage/coverage.exec" \
 
-    chmod 777 "{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file" \
+    chmod -R 777 "{{TARGET_PATH}}/{{EXPERIMENT}}/sync_file" \
     "{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing_coverage/coverage.exec" \
+    "{{TARGET_PATH}}/{{EXPERIMENT}}/corpus"
 
     # Run fuzzer
     docker rm -f "{{FUZZING_CONTAINER}}"
@@ -116,7 +117,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
 coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT "coverage" "false")
     mkdir -p "{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage "{{PROJECT_PATH}}"/resources
     touch "{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage/coverage.exec
-    chmod 777 "{{TARGET_PATH}}"/{{EXPERIMENT}}/coverage/coverage.exec
+    chmod -R 777 "{{TARGET_PATH}}"/{{EXPERIMENT}}/
 
     # record coverage
     docker rm -f {{COVERAGE_CONTAINER}}
@@ -172,7 +173,7 @@ coverage_fuzzing_seed: (prepare_corpus "fuzzing_seed") (fuzz "fuzzing_seed") (co
 dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
     mkdir -p "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg" "{{PROJECT_PATH}}/resources/"
     touch "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/log.txt"
-    chmod 777 "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/"
+    chmod -R 777 "{{TARGET_PATH}}/{{EXPERIMENT}}/dyncg/"
 
     # Run dynamic callgraph
     docker rm -f {{DYNCG_CONTAINER}}
@@ -202,7 +203,7 @@ dynamic_callgraph_fuzzing_seed: (dynamic_callgraph "fuzzing_seed")
 static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image
     mkdir -p "{{TARGET_PATH}}/staticcg" "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/" "{{PROJECT_PATH}}/resources/"
     touch "{{TARGET_PATH}}/staticcg/{{FRAMEWORK}}/{{ALGO}}/log.txt"
-    chmod 777 "{{TARGET_PATH}}/staticcg"
+    chmod -R 777 "{{TARGET_PATH}}/staticcg/"
 
     # Run static callgraph
     docker rm -f {{STATICCG_CONTAINER}}
@@ -237,14 +238,14 @@ static_callgraphs: opal_callgraphs wala_callgraphs soot_callgraphs
 
 [private]
 clean_experiment EXPERIMENT:
-    rm -rf "{{TARGET_PATH}}/{{EXPERIMENT}}"
+    docker run --rm -v "{{TARGET_PATH}}":/data busybox rm -rf /data/{{EXPERIMENT}}
 
 [private]
 clean_all_experiments: (clean_experiment "seed") (clean_experiment "fuzzing") (clean_experiment "fuzzing_seed")
 
 [private]
 clean_dyncg:
-    rm -rf "{{TARGET_PATH}}/fuzzing_seed/dyncg"
+    docker run --rm -v "{{TARGET_PATH}}":/data busybox rm -rf /data/fuzzing_seed/dyncg
 
 [private]
 clean_staticcg:
