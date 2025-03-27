@@ -17,7 +17,7 @@ export TARGET_PATH := PROJECT_PATH / "target"
 # Fuzzing parameters
 FUZZER := env_var("FUZZER")
 FUZZING_THREADS := "8"
-FUZZING_TIME := "60"
+FUZZING_TIME := "3600"
 
 # Static callgraph parameters
 DYNCG_TIMEOUT := "999m"
