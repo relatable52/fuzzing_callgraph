@@ -16,7 +16,7 @@ export TARGET_PATH := PROJECT_PATH / "target"
 
 # Fuzzing parameters
 FUZZER := env("FUZZER")
-FUZZING_THREADS := if env"TEST", "false") == "true" { "2" } else { "8" }
+FUZZING_THREADS := if env("TEST", "false") == "true" { "2" } else { "8" }
 FUZZING_TIME := if env("TEST", "false") == "true" { "60" } else { "3600" }
 
 # Static callgraph parameters
