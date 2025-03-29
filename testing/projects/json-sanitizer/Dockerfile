@@ -5,12 +5,13 @@ RUN git clone https://github.com/OWASP/json-sanitizer.git
 
 WORKDIR /build/json-sanitizer
 RUN mkdir -p /out
-RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
--Dexpression=project.version -q -DforceStdout)
 RUN mvn package
-RUN cp "target/json-sanitizer-$CURRENT_VERSION.jar" /out/json-sanitizer.jar
+RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
+-Dexpression=project.version -q -DforceStdout) && cp "target/json-sanitizer-$CURRENT_VERSION.jar" /out/json-sanitizer.jar
 
-RUN mkdir -p /repo && cp /out/json-sanitizer.jar /repo/
+RUN mvn dependency:copy -Dartifact=com.google.code.gson:gson:2.8.6 -DoutputDirectory=/out/
+
+RUN mkdir -p /repo && cp /out/*.jar /repo/
 RUN cp -r /build/jsoup/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
