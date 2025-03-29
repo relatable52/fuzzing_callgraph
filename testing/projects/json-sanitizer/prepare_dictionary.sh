@@ -1,4 +1,4 @@
-DICT_DIR-$1
+DICT_DIR-=$1
 mkdir -p "$DICT_DIR"
 cat $CORPUS/fuzzing-corpus/dictionaries/json.dict \
     $CORPUS/fuzzing-corpus/dictionaries/html.dict \
