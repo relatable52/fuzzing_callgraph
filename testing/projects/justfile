@@ -5,19 +5,19 @@ set shell := ["bash", "-uc"]
 export DOCKER_BUILDKIT := "1"
 
 # Define data directory (change to your desired location)
-export CALLGRAPH:= env_var("CALLGRAPH")
-export CORPUS := env_var("CORPUS")
+export CALLGRAPH:= env("CALLGRAPH")
+export CORPUS := env("CORPUS")
 
 # Define project paths
 export BASE_DIR := absolute_path("../")
-PROJECT := env_var("PROJECT")
+PROJECT := env("PROJECT")
 export PROJECT_PATH := CALLGRAPH / PROJECT
 export TARGET_PATH := PROJECT_PATH / "target"
 
 # Fuzzing parameters
-FUZZER := env_var("FUZZER")
-FUZZING_THREADS := "8"
-FUZZING_TIME := "3600"
+FUZZER := env("FUZZER")
+FUZZING_THREADS := if env"TEST", "false") == "true" { "2" } else { "8" }
+FUZZING_TIME := if env("TEST", "false") == "true" { "60" } else { "3600" }
 
 # Static callgraph parameters
 DYNCG_TIMEOUT := "999m"

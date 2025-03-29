@@ -1,2 +1,2 @@
-apache-commons-jxpath
-metadata-extractor
+jsoup
+json-sanitizer
