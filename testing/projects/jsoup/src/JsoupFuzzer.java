@@ -10,10 +10,10 @@ public class JsoupFuzzer {
         
         try{
             Jsoup.parse(input);
-        } except (Exception e) {}
+        } catch (Exception e) {}
 
         try{
             Jsoup.parse(input, "", Parser.xmlParser());
-        } except (Exception e) {}
+        } catch (Exception e) {}
     }
 }
