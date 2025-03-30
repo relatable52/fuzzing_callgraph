@@ -10,7 +10,9 @@ RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_A
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
 -Dexpression=project.version -q -DforceStdout) && cp target/json-flattener-$CURRENT_VERSION.jar /out/json-flattener.jar
 
-RUN mkdir -p /repo && cp /build/json-flattener/target/*.jar /repo/
+RUN mvn dependency:copy -Dartifact=com.google.code.gson:gson:2.8.6 -DoutputDirectory=/out/
+
+RUN mkdir -p /repo && cp /out/json-flattener.jar /repo/
 RUN cp -r /build/json-flattener/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
