@@ -5,6 +5,7 @@ RUN git clone https://github.com/wnameless/json-flattener.git
 
 WORKDIR /build/json-flattener
 ENV MAVEN_ARGS="-Djavac.src.version=11 -Djavac.target.version=11 -DskipTests -Dgpg.skip"
+RUN mkdir -p /out
 RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
 -Dexpression=project.version -q -DforceStdout) && cp target/json-flattener-$CURRENT_VERSION.jar /out/json-flattener.jar
