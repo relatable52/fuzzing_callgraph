@@ -12,7 +12,7 @@ RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evalu
 
 RUN mvn dependency:copy -Dartifact=com.google.code.gson:gson:2.8.6 -DoutputDirectory=/out/
 
-RUN mkdir -p /repo && cp /out/json-flattener.jar /repo/
+RUN mkdir -p /repo && cp /out/*.jar /repo/
 RUN cp -r /build/json-flattener/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
