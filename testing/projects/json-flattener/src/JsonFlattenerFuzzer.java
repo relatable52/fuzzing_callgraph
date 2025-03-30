@@ -9,8 +9,6 @@ import com.github.wnameless.json.unflattener.JsonUnflattenerFactory;
 
 import java.util.function.Consumer;
 
-import javax.swing.JTable.PrintMode;
-
 public class JsonFlattenerFuzzer {
     static PrintMode [] printModes = {PrintMode.PRETTY, PrintMode.MINIMAL};
     static FlattenMode [] flattenModes = {FlattenMode.NORMAL, FlattenMode.MONGODB, FlattenMode.KEEP_ARRAYS, FlattenMode.KEEP_PRIMITIVE_ARRAYS};
