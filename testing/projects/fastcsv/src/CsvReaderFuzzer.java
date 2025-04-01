@@ -11,7 +11,7 @@ public class CsvReaderFuzzer {
     byte[] input = data.consumeRemainingAsBytes();
     try {
       CsvReader.builder()
-        .ofCsvRecord(new InputStreamReader(new ByteArrayInputStream(input), StandardCharsets.UTF_8))
+        .ofCsvRow(new InputStreamReader(new ByteArrayInputStream(input), StandardCharsets.UTF_8))
         .stream()
         .toList();
     } catch (Exception e) {
