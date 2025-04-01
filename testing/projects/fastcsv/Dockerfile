@@ -4,7 +4,7 @@ WORKDIR /build
 RUN git clone --branch v2.2.2 https://github.com/osiegmar/FastCSV.git fastcsv
 
 WORKDIR /build/fastcsv
-RUN ./gradlew --console=plain clean build
+RUN ./gradlew --console=plain jar
 
 RUN mkdir -p /repo && cp build/libs/fastcsv-*.jar /repo/fastcsv.jar
 RUN cp -r build/classes/java/main /classes
