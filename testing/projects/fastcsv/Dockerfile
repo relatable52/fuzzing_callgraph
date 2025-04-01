@@ -1,4 +1,4 @@
-FROM gradle:7.6.2-jdk8 AS builder
+FROM gradle:7.6.2-jdk11 AS builder
 
 WORKDIR /build
 RUN git clone https://github.com/osiegmar/FastCSV.git fastcsv
