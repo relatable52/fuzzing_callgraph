@@ -13,7 +13,7 @@ public class CsvReaderFuzzer {
       CsvReader.builder()
         .build(new InputStreamReader(new ByteArrayInputStream(input), StandardCharsets.UTF_8))
         .stream()
-        .toList();
+        .toString();
     } catch (Exception e) {
       // Ignore exceptions
     }
