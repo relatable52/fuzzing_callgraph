@@ -6,7 +6,7 @@ RUN git clone --branch v2.2.2 https://github.com/osiegmar/FastCSV.git fastcsv
 WORKDIR /build/fastcsv
 RUN ./gradlew --console=plain jar
 
-RUN mkdir -p /repo && cp build/libs/fastcsv-*.jar /repo/fastcsv.jar
+RUN mkdir -p /repo && cp build/* /repo/
 RUN cp -r build/classes/java/main /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
