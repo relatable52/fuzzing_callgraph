@@ -1,13 +1,13 @@
-FROM gradle:7.6.4-jdk17 AS builder
+FROM gradle:7.6.4-jdk8 AS builder
 
 WORKDIR /build
-RUN git clone https://github.com/osiegmar/FastCSV.git fastcsv
+RUN git clone --branch v2.2.2 https://github.com/osiegmar/FastCSV.git fastcsv
 
 WORKDIR /build/fastcsv
-RUN ./gradlew --console=plain lib:jar
+RUN ./gradlew --console=plain clean build
 
-RUN mkdir -p /repo && cp lib/build/libs/fastcsv-*.jar /repo/fastcsv.jar
-RUN cp -r lib/build/classes/java/main /classes
+RUN mkdir -p /repo && cp build/libs/fastcsv-*.jar /repo/fastcsv.jar
+RUN cp -r build/classes/java/main /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 COPY --from=jazzer libunsafe_provider.jar /repo/
