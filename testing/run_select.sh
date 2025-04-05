@@ -29,4 +29,6 @@ while IFS= read -r program || [[ -n "$program" ]]; do
     for i in {1..12}; do
         just --dotenv-path "$program/.env" projects/coverage_fuzzing_seed
     done
+
+    just --dotenv-path "$program/.env" projects/dynamic_callgraph_fuzzing_seed
 done <"$TO_RUN"
