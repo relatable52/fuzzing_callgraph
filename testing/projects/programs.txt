@@ -6,3 +6,4 @@ json-flattener
 json-simple
 fastcsv
 rome
+zip4j
