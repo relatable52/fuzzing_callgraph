@@ -7,10 +7,11 @@ WORKDIR /build/rome
 ENV MAVEN_ARGS="-DskipTests -Djavac.src.version=15 -Djavac.target.version=15 -Dmaven.javadoc.skip=true"
 RUN mkdir -p /out
 RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
-RUN cp target/rome-2.1.0.jar /out/rome.jar
+RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
+-Dexpression=project.version -q -DforceStdout) && cp rome/target/rome-$CURRENT_VERSION.jar /out/rome.jar
 
 RUN mkdir -p /repo && cp /out/rome.jar /repo/rome.jar
-RUN cp -r /build/rome/target/classes /classes
+RUN cp -r /build/rome/rome/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 COPY --from=jazzer libunsafe_provider.jar /repo/
