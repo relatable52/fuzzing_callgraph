@@ -5,7 +5,7 @@ import os
 
 to_run_path = Path("projects/to_run.txt")
 callgraph_path = os.environ.get("CALLGRAPH")
-log_path = Path(os.path.joing(callgraph_path, "run_test.log"))
+log_path = Path(os.path.join(callgraph_path, "run_test.log"))
 
 if not to_run_path.exists():
     print(f"Error: {to_run_path} not found!")
