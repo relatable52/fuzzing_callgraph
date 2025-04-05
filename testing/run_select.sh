@@ -9,6 +9,9 @@ if [[ ! -f "$TO_RUN" ]]; then
     exit 1
 fi
 
+# Log the start of the script
+echo "Script started at $(date)" | tee -a "$LOG_FILE"
+
 # Read and process each program
 while IFS= read -r program || [[ -n "$program" ]]; do
     # Trim potential carriage returns
