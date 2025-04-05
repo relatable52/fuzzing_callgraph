@@ -5,8 +5,8 @@ TEST_LOG_FILE := "$CALLGRAPH/test_log.txt"
 run_select:
     #!/bin/bash
     # Ensure the file exists
-    if [[ ! -f "$TO_RUN" ]]; then
-        echo "Error: $TO_RUN not found!" | tee -a "{{LOG_FILE}}"
+    if [[ ! -f "{{TO_RUN}}" ]]; then
+        echo "Error: {{TO_RUN}} not found!" | tee -a "{{LOG_FILE}}"
         exit 1
     fi
 
@@ -44,13 +44,13 @@ run_select:
 
         # Log completion of the program
         echo "Finished program: $program at $(date)" | tee -a "{{LOG_FILE}}"
-    done <"$TO_RUN"
+    done <"{{TO_RUN}}"
 
 run_test:
     #!/bin/bash
     # Ensure the file exists
-    if [[ ! -f "$TO_RUN" ]]; then
-        echo "Error: $TO_RUN not found!" | tee -a "{{TEST_LOG_FILE}}"
+    if [[ ! -f "{{TO_RUN}}" ]]; then
+        echo "Error: {{TO_RUN}} not found!" | tee -a "{{TEST_LOG_FILE}}"
         exit 1
     fi
 
@@ -74,7 +74,7 @@ run_test:
         # Log completion of the program
         echo "Finished program: $program at $(date)" | tee -a "{{TEST_LOG_FILE}}"
 
-    done <"$TO_RUN"
+    done <"{{TO_RUN}}"
 
     # Log the end of the script
     echo "Script ended at $(date)" | tee -a "{{TEST_LOG_FILE}}"
