@@ -1,6 +1,8 @@
+CALLGRAPH:= env("CALLGRAPH")
+
 TO_RUN := "projects/to_run.txt"
-LOG_FILE := "$CALLGRAPH/run_log.txt"
-TEST_LOG_FILE := "$CALLGRAPH/test_log.txt"
+LOG_FILE := CALLGRAPH / "run_log.txt"
+TEST_LOG_FILE := CALLGRAPH / "test_log.txt"
 
 run_select:
     #!/bin/bash
