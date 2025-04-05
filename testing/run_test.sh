@@ -24,7 +24,7 @@ while IFS= read -r program || [[ -n "$program" ]]; do
     echo "Running program: $program at $(date)" | tee -a "$LOG_FILE"
 
     # Run the just command
-    just --dotenv-path "$program/.env" projects/build_jar
+    just --dotenv-path "$program/.env" projects/coverage_seed
 
     # Log completion of the program
     echo "Finished program: $program at $(date)" | tee -a "$LOG_FILE"
