@@ -1,16 +1,16 @@
-FROM maven:3.6.3-openjdk-11 AS builder
+FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
 RUN git clone -b v2.9.0 https://github.com/srikanth-lingala/zip4j.git zip4j
 
 WORKDIR /build/zip4j
-ENV MAVEN_ARGS="-Dmaven.test.skip=true -Djavac.src.version=15 -Djavac.target.version=15"
+ENV MAVEN_ARGS="-Dmaven.test.skip=true -Djavac.src.version=8 -Djavac.target.version=8"
 ENV MAVEN_ARGS=$MAVEN_ARGS" -Dmaven.wagon.httpconnectionManager.ttlSeconds=120"
 ENV MAVEN_ARGS=$MAVEN_ARGS" -Dmaven.wagon.http.retryHandler.requestSentEnabled=true"
 ENV MAVEN_ARGS=$MAVEN_ARGS" -Dmaven.wagon.http.retryHandler.count=5"
 RUN mkdir -p /out
-RUN mvn versions:set -DgroupId=org.apache.felix -DartifactId=maven-bundle-plugin -DnewVersion=4.2.0-SNAPSHOT \
-&& mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
+
+RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
 -Dexpression=project.version -q -DforceStdout) && cp target/zip4j-$CURRENT_VERSION.jar /out/zip4j.jar
 
