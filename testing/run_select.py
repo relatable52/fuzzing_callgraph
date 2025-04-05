@@ -28,7 +28,7 @@ FUZZING_SEED_RUNS = args.fuzzing_seed
 # Paths
 to_run_path = Path("projects/to_run.txt")
 callgraph_path = os.environ.get("CALLGRAPH")
-log_path = Path(callgraph_path) / "run_test.log"
+log_path = Path(callgraph_path) / "run_select.log"
 
 # Configure logging
 logging.basicConfig(

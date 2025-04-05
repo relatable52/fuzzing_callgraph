@@ -2,27 +2,43 @@ from pathlib import Path
 import subprocess
 from datetime import datetime
 import os
+import logging
 
+# Paths
 to_run_path = Path("projects/to_run.txt")
 callgraph_path = os.environ.get("CALLGRAPH")
-log_path = Path(os.path.join(callgraph_path, "run_test.log"))
+log_path = Path(callgraph_path) / "run_test.log"
 
+# Configure logging
+logging.basicConfig(
+    filename=log_path,
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+
+# Start script
 if not to_run_path.exists():
-    print(f"Error: {to_run_path} not found!")
-    log_path.write_text(f"Error: {to_run_path} not found!\n")
+    logging.error(f"{to_run_path} not found!")
     exit(1)
 
-with log_path.open("a") as log, to_run_path.open() as f:
-    log.write(f"Script started at {datetime.now()}\n")
+logging.info("Script started")
+
+# Process programs
+with to_run_path.open() as f:
     for line in f:
         program = line.strip()
         if not program:
             continue
 
-        log.write(f"Running program: {program} at {datetime.now()}\n")
+        logging.info(f"Running: {program}")
         try:
-            subprocess.run(["just", "--dotenv-path", f"{program}/.env", "projects/coverage_seed"], check=True)
+            subprocess.run(
+                ["just", "--dotenv-path", f"{program}/.env", "projects/coverage_seed"],
+                check=True,
+            )
         except subprocess.CalledProcessError as e:
-            log.write(f"Error running {program}: {e}\n")
-        log.write(f"Finished program: {program} at {datetime.now()}\n")
-    log.write(f"Script ended at {datetime.now()}\n")
+            logging.error(f"Failed: {program} | {e}")
+        else:
+            logging.info(f"Finished: {program}")
+
+logging.info("Script ended")
