@@ -34,7 +34,7 @@ public class JsonFlattenerFuzzer {
                 ju.unflatten();
                 ju.unflattenAsMap();
             } catch (Exception e) {}
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             // Need to catch it to let fuzzer find initeresting findings.
         }
     }
