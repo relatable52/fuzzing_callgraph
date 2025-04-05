@@ -15,7 +15,7 @@ RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evalu
 -Dexpression=project.version -q -DforceStdout) && cp target/zip4j-$CURRENT_VERSION.jar /out/zip4j.jar
 
 RUN mkdir -p /repo && cp /out/zip4j.jar /repo/zip4j.jar
-RUN cp -r /build/rome/target/classes /classes
+RUN cp -r /build/zip4j/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 COPY --from=jazzer libunsafe_provider.jar /repo/
