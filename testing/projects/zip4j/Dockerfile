@@ -9,7 +9,7 @@ ENV MAVEN_ARGS=$MAVEN_ARGS" -Dmaven.wagon.httpconnectionManager.ttlSeconds=120"
 ENV MAVEN_ARGS=$MAVEN_ARGS" -Dmaven.wagon.http.retryHandler.requestSentEnabled=true"
 ENV MAVEN_ARGS=$MAVEN_ARGS" -Dmaven.wagon.http.retryHandler.count=5"
 RUN mkdir -p /out
-RUN mvn versions:use-dep-version -Dincludes=org.apache.felix:maven-bundle-plugin -DdepVersion=4.2.0 -DforceVersion=true \
+RUN mvn mvn versions:set -DgroupId=org.apache.felix -DartifactId=maven-bundle-plugin -DnewVersion=2.1.0-SNAPSHOT \
 && mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
 -Dexpression=project.version -q -DforceStdout) && cp target/zip4j-$CURRENT_VERSION.jar /out/zip4j.jar
