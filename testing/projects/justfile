@@ -198,6 +198,7 @@ dynamic_callgraph EXPERIMENT: build_jar build_jcg_image
         --debug
 
 dynamic_callgraph_fuzzing_seed: (dynamic_callgraph "fuzzing_seed")
+dynamic_callgraph_fuzzing: (dynamic_callgraph "fuzzing")
 
 [private]
 static_callgraph FRAMEWORK ALGO: build_jar build_jcg_image

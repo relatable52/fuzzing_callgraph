@@ -20,8 +20,8 @@ while IFS= read -r program || [[ -n "$program" ]]; do
     just --dotenv-path "$program/.env" projects/coverage_seed
     just --dotenv-path "$program/.env" projects/static_callgraphs
     
-    # Run fuzzing 3 times
-    for i in {1..3}; do
+    # Run fuzzing 5 times
+    for i in {1..5}; do
         just --dotenv-path "$program/.env" projects/coverage_fuzzing
     done
 
@@ -31,4 +31,5 @@ while IFS= read -r program || [[ -n "$program" ]]; do
     done
 
     just --dotenv-path "$program/.env" projects/dynamic_callgraph_fuzzing_seed
+    just --dotenv-path "$program/.env" projects/dynamic_callgraph_fuzzing
 done <"$TO_RUN"
