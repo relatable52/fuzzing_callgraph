@@ -1,7 +1,7 @@
 FROM maven:3.6.3-openjdk-11 AS builder
 
 WORKDIR /build
-RUN git clone https://github.com/srikanth-lingala/zip4j.git zip4j
+RUN git clone -b v2.7.0 https://github.com/srikanth-lingala/zip4j.git zip4j
 
 WORKDIR /build/zip4j
 ENV MAVEN_ARGS="-Dmaven.test.skip=true -Djavac.src.version=15 -Djavac.target.version=15"
