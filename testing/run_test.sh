@@ -17,6 +17,7 @@ while IFS= read -r program || [[ -n "$program" ]]; do
     [[ -z "$program" ]] && continue
 
     # Run the just command
-    just --dotenv-path "$program/.env" projects/coverage_seed
+    just --dotenv-path "$program/.env" projects/coverage_fuzzing_seed
+    just --dotenv-path "$program/.env" projects/dynamic_callgraph_fuzzing_seed
     
 done <"$TO_RUN"
