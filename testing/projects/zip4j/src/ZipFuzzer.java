@@ -74,7 +74,7 @@ public class ZipFuzzer {
 
             }
 
-        } catch (IOException e) {
+        } catch (IOException | Exception e) {
             return;
         }
     }

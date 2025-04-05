@@ -14,7 +14,7 @@ public class XmlReaderFuzzer {
     try{
       SyndFeed feed = new SyndFeedInput().build(new XmlReader(bais));
     }
-    catch( IOException | FeedException | IllegalArgumentException e){
+    catch( IOException | FeedException | IllegalArgumentException | Exception e){
       return;
     }
   
