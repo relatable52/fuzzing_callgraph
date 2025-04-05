@@ -1,10 +1,11 @@
 #!/bin/bash
 
 TO_RUN="projects/to_run.txt"
+LOG_FILE="$CALLGRAPH/run_log.txt"
 
 # Ensure the file exists
 if [[ ! -f "$TO_RUN" ]]; then
-    echo "Error: $TO_RUN not found!"
+    echo "Error: $TO_RUN not found!" | tee -a "$LOG_FILE"
     exit 1
 fi
 
@@ -15,6 +16,9 @@ while IFS= read -r program || [[ -n "$program" ]]; do
 
     # Skip empty lines
     [[ -z "$program" ]] && continue
+
+    # Log the program being run
+    echo "Running program: $program at $(date)" | tee -a "$LOG_FILE"
 
     # Run the just command
     just --dotenv-path "$program/.env" projects/coverage_seed
@@ -30,6 +34,10 @@ while IFS= read -r program || [[ -n "$program" ]]; do
         just --dotenv-path "$program/.env" projects/coverage_fuzzing_seed
     done
 
+    # Run dynamic callgraph fuzzing
     just --dotenv-path "$program/.env" projects/dynamic_callgraph_fuzzing_seed
     just --dotenv-path "$program/.env" projects/dynamic_callgraph_fuzzing
+
+    # Log completion of the program
+    echo "Finished program: $program at $(date)" | tee -a "$LOG_FILE"
 done <"$TO_RUN"
