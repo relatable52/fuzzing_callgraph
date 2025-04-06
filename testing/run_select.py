@@ -12,15 +12,11 @@ def run_just(program, target):
         subprocess.run(
             ["just", "--dotenv-path", f"{program}/.env", target],
             check=True,
-            env=env,
-            capture_output=True,
-            text=True
+            env=env
         )
         logging.info(f"Ran target: {target} for {program}")
     except subprocess.CalledProcessError as e:
         logging.error(f"Failed target: {target} for {program} | {e}")
-        logging.error(f"STDOUT: {e.stdout}")
-        logging.error(f"STDERR: {e.stderr}")
 
 # Argument parsing
 parser = argparse.ArgumentParser(description="Run coverage and fuzzing targets for programs listed in a file.")
