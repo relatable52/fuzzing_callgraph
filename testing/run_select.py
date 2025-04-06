@@ -18,8 +18,8 @@ def run_just(program, target):
 
 # Argument parsing
 parser = argparse.ArgumentParser(description="Run coverage and fuzzing targets for programs listed in a file.")
-parser.add_argument("--fuzzing", type=int, default=5, help="Number of times to run coverage_fuzzing (default: 5)")
-parser.add_argument("--fuzzing-seed", type=int, default=12, help="Number of times to run coverage_fuzzing_seed (default: 12)")
+parser.add_argument("--fuzzing", type=int, default=6, help="Number of times to run coverage_fuzzing (default: 5)")
+parser.add_argument("--fuzzing-seed", type=int, default=6, help="Number of times to run coverage_fuzzing_seed (default: 12)")
 args = parser.parse_args()
 
 FUZZING_RUNS = args.fuzzing

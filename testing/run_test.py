@@ -4,6 +4,17 @@ from datetime import datetime
 import os
 import logging
 
+# Function to run a just target
+def run_just(program, target):
+    try:
+        subprocess.run(
+            ["just", "--dotenv-path", f"{program}/.env", target],
+            check=True
+        )
+        logging.info(f"Ran target: {target} for {program}")
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Failed target: {target} for {program} | {e}")
+
 # Paths
 to_run_path = Path("projects/to_run.txt")
 callgraph_path = os.environ.get("CALLGRAPH")
@@ -31,14 +42,10 @@ with to_run_path.open() as f:
             continue
 
         logging.info(f"Running: {program}")
-        try:
-            subprocess.run(
-                ["just", "--dotenv-path", f"{program}/.env", "projects/coverage_seed"],
-                check=True,
-            )
-        except subprocess.CalledProcessError as e:
-            logging.error(f"Failed: {program} | {e}")
-        else:
-            logging.info(f"Finished: {program}")
+        
+        run_just(program, "projects/coverage_fuzzing")
+        run_just(program, "projects/dynamic_callgraph_fuzzing")
+        
+        logging.info(f"Finished program: {program}")
 
 logging.info("Script ended")
