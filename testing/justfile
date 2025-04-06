@@ -1,5 +1,7 @@
+CALLGRAPH:= env("CALLGRAPH")
+
 run_test:
-    python run_test.py
+    python run_test.py 2>&1 | tee "{{CALLGRAPH}}/test_all.log"
 
 run_select FUZZING_RUNS FUZZING_SEED_RUNS:
-    python run_select.py --fuzzing {{FUZZING_RUNS}} --fuzzing-seed {{FUZZING_SEED_RUNS}}
+    python run_select.py --fuzzing {{FUZZING_RUNS}} --fuzzing-seed {{FUZZING_SEED_RUNS}} 2>&1 | tee "{{CALLGRAPH}}/run_all.log"
