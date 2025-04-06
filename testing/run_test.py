@@ -6,14 +6,20 @@ import logging
 
 # Function to run a just target
 def run_just(program, target):
+    env = os.environ.copy()
     try:
         subprocess.run(
             ["just", "--dotenv-path", f"{program}/.env", target],
-            check=True
+            check=True,
+            env=env,
+            capture_output=True,
+            text=True
         )
         logging.info(f"Ran target: {target} for {program}")
     except subprocess.CalledProcessError as e:
         logging.error(f"Failed target: {target} for {program} | {e}")
+        logging.error(f"STDOUT: {e.stdout}")
+        logging.error(f"STDERR: {e.stderr}")
 
 # Paths
 to_run_path = Path("projects/to_run.txt")
@@ -42,7 +48,7 @@ with to_run_path.open() as f:
             continue
 
         logging.info(f"Running: {program}")
-        
+
         run_just(program, "projects/coverage_fuzzing")
         run_just(program, "projects/dynamic_callgraph_fuzzing")
         
