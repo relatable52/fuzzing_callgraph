@@ -1,7 +1,7 @@
 FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
-RUN git clone -b X_STREAM_1_4_20 https://github.com/x-stream/xstream.git xstream
+RUN git clone -b XSTREAM_1_4_20 https://github.com/x-stream/xstream.git xstream
 
 WORKDIR /build/woodstox
 ENV MAVEN_ARGS="-DskipTests -Djavac.src.version=15 -Djavac.target.version=15"
