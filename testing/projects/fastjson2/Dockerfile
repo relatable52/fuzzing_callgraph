@@ -1,7 +1,7 @@
 FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
-RUN git clone -b 1.2.80 https://github.com/alibaba/fastjson2.git fastjson2
+RUN git clone -b 2.0.57 https://github.com/alibaba/fastjson2.git fastjson2
 
 ENV MAVEN_ARGS="-Dmaven.test.skip=true -Djdk.version=15"
 
