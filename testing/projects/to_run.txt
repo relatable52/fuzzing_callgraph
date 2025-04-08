@@ -1,8 +1,6 @@
 apache-commons-jxpath
 metadata-extractor
 jsoup
-json-sanitizer
-json-flattener
 json-simple
 fastcsv
 rome
