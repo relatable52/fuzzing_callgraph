@@ -13,7 +13,7 @@ WORKDIR /build/json-smart/json-smart
 RUN mkdir -p /out
 RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
--Dexpression=project.version -q -DforceStdout) && cp target/json-smart-$CURRENT_VERSION.jar /out/json-smart.ja
+-Dexpression=project.version -q -DforceStdout) && cp target/json-smart-$CURRENT_VERSION.jar /out/json-smart.jar
 
 RUN mkdir -p /repo && cp /out/*.jar /repo/
 RUN cp -r /build/json-smart/json-smart/target/classes /classes
