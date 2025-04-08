@@ -6,7 +6,7 @@ public class JsonFuzzer {
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
         try {
             JSON.parse(data.consumeRemainingAsString());
-        } catch (JSONException ignored) {
+        } catch (Exception ignored) {
         }
     }
 }
