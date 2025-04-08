@@ -1,4 +1,4 @@
-FROM maven:3.6.3-openjdk-11 AS builder
+FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
 RUN git clone -b 2.1.0 https://github.com/rometools/rome.git

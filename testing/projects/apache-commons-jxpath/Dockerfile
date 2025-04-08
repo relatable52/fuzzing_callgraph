@@ -1,7 +1,7 @@
 FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
-RUN git clone https://github.com/apache/commons-jxpath.git
+RUN git clone -b https://github.com/apache/commons-jxpath.git && git reset --hard 94797ec17c1ccc699785197dbad27383d72047c1
 
 WORKDIR /build/commons-jxpath
 ENV MAVEN_ARGS="-Djavac.src.version=15 -Djavac.target.version=15 -DskipTests"

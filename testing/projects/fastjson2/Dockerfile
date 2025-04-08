@@ -1,4 +1,4 @@
-FROM maven:3.6.3-openjdk-11 AS builder
+FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
 RUN git clone -b 1.2.80 https://github.com/alibaba/fastjson2.git fastjson2

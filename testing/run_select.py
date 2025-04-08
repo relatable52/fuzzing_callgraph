@@ -67,6 +67,9 @@ with to_run_path.open() as f:
             logging.info(f"Fuzzing seed iteration {i}/{FUZZING_SEED_RUNS} for {program}")
             run_just(program, "projects/coverage_fuzzing_seed")
 
+        run_just(program, "projects/dynamic_callgraph_fuzzing")
+        run_just(program, "projects/dynamic_callgraph_fuzzing_seed")
+        
         logging.info(f"Finished program: {program}")
 
 logging.info("Script ended")

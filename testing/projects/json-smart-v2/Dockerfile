@@ -1,7 +1,7 @@
-FROM maven:3.6.3-openjdk-11 AS builder
+FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
-RUN git clone https://github.com/netplex/json-smart-v2.git json-smart
+RUN git clone -b 2.5.1 https://github.com/netplex/json-smart-v2.git json-smart
 
 ENV MAVEN_ARGS="-DskipTests -Djavac.src.version=15 -Djavac.target.version=15 \
     -Dmaven.javadoc.skip=true -Dmaven.repo.local=/build/m2"

@@ -110,6 +110,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
         -fork={{FUZZING_THREADS}} \
         -max_len=100000 \
         -timeout=60 \
+        -rss_limit_mb=8182 \
         -dict=dict.txt \
         corpus
 

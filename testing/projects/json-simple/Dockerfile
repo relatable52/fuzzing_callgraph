@@ -1,7 +1,7 @@
-FROM maven:3.6.3-openjdk-11 AS builder
+FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
-RUN git clone https://github.com/fangyidong/json-simple.git
+RUN git clone -b tag_release_1_1_1 https://github.com/fangyidong/json-simple.git
 
 WORKDIR /build/json-simple
 ENV MAVEN_ARGS="-Djavac.src.version=8 -Djavac.target.version=8 -DskipTests -Dgpg.skip"
