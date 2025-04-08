@@ -3,7 +3,7 @@ FROM maven:3.6.3-openjdk-8 AS builder
 WORKDIR /build
 RUN git clone -b XSTREAM_1_4_20 https://github.com/x-stream/xstream.git xstream
 
-WORKDIR /build/woodstox
+WORKDIR /build/xstream
 ENV MAVEN_ARGS="-DskipTests -Djavac.src.version=15 -Djavac.target.version=15"
 RUN mkdir -p /out
 RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
