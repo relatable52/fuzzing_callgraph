@@ -11,7 +11,7 @@ RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evalu
 -Dexpression=project.version -q -DforceStdout) && cp target/woodstox-core-$CURRENT_VERSION.jar /out/woodstox.jar
 
 RUN mkdir -p /repo && cp /out/*.jar /repo/
-RUN cp -r /build/rome/rome/target/classes /classes
+RUN cp -r /build/woodstox/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 COPY --from=jazzer libunsafe_provider.jar /repo/
