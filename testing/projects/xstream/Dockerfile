@@ -1,17 +1,17 @@
-FROM maven:3.6.3-openjdk-8 AS builder
+FROM maven:3.6.3-openjdk-11 AS builder
 
 WORKDIR /build
-RUN git clone -b woodstox-core-7.1.0 https://github.com/FasterXML/woodstox.git
+RUN git clone -b X_STREAM_1_4_20 https://github.com/x-stream/xstream.git xstream
 
 WORKDIR /build/woodstox
-ENV MAVEN_ARGS="-Djavac.src.version=15 -Djavac.target.version=15 -DskipTests"
+ENV MAVEN_ARGS="-DskipTests -Djavac.src.version=15 -Djavac.target.version=15"
 RUN mkdir -p /out
 RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
--Dexpression=project.version -q -DforceStdout) && cp target/woodstox-core-$CURRENT_VERSION.jar /out/woodstox.jar
+-Dexpression=project.version -q -DforceStdout) && cp xstream/target/xstream-$CURRENT_VERSION.jar /out/xstream.jar
 
 RUN mkdir -p /repo && cp /out/*.jar /repo/
-RUN cp -r /build/woodstox/target/classes /classes
+RUN cp -r /build/xstream/xstream/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 COPY --from=jazzer libunsafe_provider.jar /repo/

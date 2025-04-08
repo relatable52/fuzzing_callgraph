@@ -1,17 +1,18 @@
-FROM maven:3.6.3-openjdk-8 AS builder
+FROM maven:3.6.3-openjdk-11 AS builder
 
 WORKDIR /build
-RUN git clone -b woodstox-core-7.1.0 https://github.com/FasterXML/woodstox.git
+RUN git clone -b 1.2.80 https://github.com/alibaba/fastjson2.git fastjson2
 
-WORKDIR /build/woodstox
-ENV MAVEN_ARGS="-Djavac.src.version=15 -Djavac.target.version=15 -DskipTests"
+ENV MAVEN_ARGS="-Dmaven.test.skip=true -Djdk.version=15"
+
+WORKDIR /build/fastjson2
 RUN mkdir -p /out
-RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
+RUN mvn package $MAVEN_ARGS
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
--Dexpression=project.version -q -DforceStdout) && cp target/woodstox-core-$CURRENT_VERSION.jar /out/woodstox.jar
+-Dexpression=project.version -q -DforceStdout) && cp core/target/fastjson2-$CURRENT_VERSION.jar /out/fastjson2.jar
 
 RUN mkdir -p /repo && cp /out/*.jar /repo/
-RUN cp -r /build/woodstox/target/classes /classes
+RUN cp -r /build/fastjson2/core/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 COPY --from=jazzer libunsafe_provider.jar /repo/
