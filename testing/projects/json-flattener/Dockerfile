@@ -1,7 +1,7 @@
 FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
-RUN git clone https://github.com/wnameless/json-flattener.git
+RUN git clone -b json-flattener-0.7.0 https://github.com/wnameless/json-flattener.git
 
 WORKDIR /build/json-flattener
 ENV MAVEN_ARGS="-Djavac.src.version=8 -Djavac.target.version=8 -DskipTests -Dgpg.skip"
