@@ -1,4 +1,4 @@
-FROM maven:3.6.3-openjdk-8 AS builder
+FROM maven:3.6.3-openjdk-11 AS builder
 
 WORKDIR /build
 RUN git clone -b json-flattener-0.16.0 https://github.com/wnameless/json-flattener.git
@@ -19,6 +19,10 @@ RUN cp -r /build/json-flattener/target/classes /classes
 COPY --from=jazzer jazzer_standalone.jar /repo/
 COPY --from=jazzer libunsafe_provider.jar /repo/
 
+FROM maven:3.6.3-openjdk-8 AS fuzzer
+
+COPY --from=builder /repo/*.jar /repo/
+
 RUN mkdir -p /build/fuzzer /build/fuzzer/target
 WORKDIR /build/fuzzer
 RUN --mount=type=bind,source=src/,target=src/ \
@@ -27,5 +31,5 @@ RUN --mount=type=bind,source=src/,target=src/ \
     rm -rf target
 
 FROM scratch
-COPY --from=builder /repo/ /repo/
+COPY --from=fuzzer /repo/ /repo/
 COPY --from=builder /classes/ /classes/
