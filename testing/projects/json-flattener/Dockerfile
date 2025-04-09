@@ -1,10 +1,11 @@
 FROM maven:3.6.3-openjdk-8 AS builder
 
 WORKDIR /build
-RUN git clone -b json-flattener-0.7.0 https://github.com/wnameless/json-flattener.git
+RUN git clone -b json-flattener-0.16.0 https://github.com/wnameless/json-flattener.git
 
 WORKDIR /build/json-flattener
-ENV MAVEN_ARGS="-Djavac.src.version=8 -Djavac.target.version=8 -DskipTests -Dgpg.skip"
+ENV MAVEN_ARGS="-Djavac.src.version=8 -Djavac.target.version=8 -DskipTests -Dgpg.skip \
+-Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8 -Dmaven.compiler.release=8"
 RUN mkdir -p /out
 RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
