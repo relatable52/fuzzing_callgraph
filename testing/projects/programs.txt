@@ -12,3 +12,9 @@ fastjson2
 json-smart-v2
 xstream
 woodstox
+dom4j
+zt-zip
+apache-commons-csv
+jsqlparser
+jackson-core
+apache-commons-imaging
