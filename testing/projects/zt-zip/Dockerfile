@@ -16,7 +16,7 @@ RUN git checkout tags/zt-zip-1.16
 
 # Build with Maven using Java 11
 ENV MAVEN_ARGS="-Djavac.src.version=11 -Djavac.target.version=11 -DskipTests"
-RUN mvn install $MAVEN_ARGS
+RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 
 # Extract version and copy jar + classes
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
