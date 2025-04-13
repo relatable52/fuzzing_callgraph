@@ -26,7 +26,7 @@ RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evalu
 RUN mkdir -p /classes && cp -r target/classes/* /classes/
 
 RUN mkdir -p /repo && cp /output/*.jar /repo/
-RUN cp -r /build/json-flattener/target/classes /classes
+RUN cp -r /build/zt-zip/target/classes /classes
 
 COPY --from=jazzer jazzer_standalone.jar /repo/
 COPY --from=jazzer libunsafe_provider.jar /repo/
