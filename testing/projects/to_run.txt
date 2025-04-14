@@ -1,16 +1,4 @@
-apache-commons-jxpath
-metadata-extractor
-jsoup
 json-sanitizer
 json-flattener
-json-simple
-fastcsv
-rome
-zip4j
-jettison
-fastjson2
-json-smart-v2
-xstream
-woodstox
 dom4j
 zt-zip
