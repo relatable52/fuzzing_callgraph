@@ -18,3 +18,5 @@ apache-commons-csv
 jsqlparser
 jackson-core
 apache-commons-imaging
+calcite
+itext7
