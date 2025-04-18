@@ -12,7 +12,7 @@ RUN git clone $MAIN_REPO $PROJECT
 WORKDIR /build/$PROJECT
 
 # Optional: Checkout a known stable version
-RUN git checkout tags/jsqlparser-5.1
+RUN git checkout tags/jsqlparser-4.8
 
 # Build with Maven using Java 11
 ENV MAVEN_ARGS="-Djavac.src.version=11 -Djavac.target.version=11 -DskipTests"

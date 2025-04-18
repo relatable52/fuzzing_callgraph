@@ -6,7 +6,7 @@ RUN git clone -b rel/commons-csv-1.14.0 https://github.com/apache/commons-csv.gi
 WORKDIR /build/apache-commons-csv
 ENV MAVEN_ARGS="-DskipTests -Djavac.src.version=15 -Djavac.target.version=15 -Dmaven.javadoc.skip=true"
 RUN mkdir -p /out
-RUN mvn package -Dmaven.wagon.http.retryHandler.count=5 -Dmaven.wagon.httpconnectionManager.ttlSeconds=25 org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
+RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_ARGS
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
 -Dexpression=project.version -q -DforceStdout) && cp "target/commons-csv-$CURRENT_VERSION.jar" /out/commons-csv.jar
 
