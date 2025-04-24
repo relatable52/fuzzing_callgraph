@@ -44,16 +44,20 @@ DISABLED_HOOKS:= "com.code_intelligence.jazzer.sanitizers.ReflectiveCall:com.cod
 # Recipe to build Jazzer Docker image
 [private]
 build_jazzer_image:
-    docker build -t jazzer -f {{BASE_DIR}}/jazzer-linux/Dockerfile {{BASE_DIR}}/jazzer-linux
-
-[private]
-build_jazzer_input_parser:
-    docker build --tag=jazzer-input-parser "{{BASE_DIR}}"/jazzer_input_parser
+    if docker manifest inspect jazzer > /dev/null 2>&1; then \
+        echo "Jazzer image exists"; \
+    else \
+        docker build -t jazzer -f {{BASE_DIR}}/jazzer-linux/Dockerfile {{BASE_DIR}}/jazzer-linux; \
+    fi
 
 # Recipe to build JCG Docker image
 [private]
 build_jcg_image:
-    docker build -t jcg -f {{BASE_DIR}}/jcg/Dockerfile {{BASE_DIR}}/jcg
+    if docker manifest inspect jcg > /dev/null 2>&1; then \
+        echo "JCG image exists"; \
+    else \
+        docker build -t jcg -f {{BASE_DIR}}/jcg/Dockerfile {{BASE_DIR}}/jcg; \
+    fi
 
 # Recipe to build project JAR
 build_jar: build_jazzer_image
