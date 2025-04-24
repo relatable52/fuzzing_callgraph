@@ -25,7 +25,7 @@ RUN mvn -pl ${MODULE} package org.apache.maven.plugins:maven-shade-plugin:3.2.4:
 RUN CURRENT_VERSION=$(mvn -pl ${MODULE} org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
   -Dexpression=project.version -q -DforceStdout) && \
   mkdir -p /repo && \
-  cp ${MODULE}/target/*.jar /repo/
+  cp ${MODULE}/target/itext7-${MODULE}-${CURRENT_VERSION}.jar /repo/itext7.jar
 
 RUN mkdir -p /classes && cp -r ${MODULE}/target/classes/* /classes/
 
