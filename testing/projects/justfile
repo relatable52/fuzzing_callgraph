@@ -110,11 +110,12 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
         --instrumentation_includes=$INSTRUMENT_CLASSES \
         --disabled_hooks={{DISABLED_HOOKS}} \
         --id_sync_file=/fuzzing/sync_file \
+        --jvm_args="-Xmx64g" \
         -max_total_time={{FUZZING_TIME}} \
         -fork={{FUZZING_THREADS}} \
         -max_len=100000 \
         -timeout=60 \
-        -rss_limit_mb=8182 \
+        -rss_limit_mb=65536 \
         -dict=dict.txt \
         corpus
 
@@ -138,8 +139,8 @@ coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT
         --target_class={{FUZZER}} \
         --instrumentation_includes=$INSTRUMENT_CLASSES \
         --disabled_hooks={{DISABLED_HOOKS}} \
-        --jvm_args="-javaagent\\:/jacocoagent.jar=destfile=/coverage/coverage.exec" \
-        -rss_limit_mb=8182 \
+        --jvm_args="-Xmx64g -javaagent\\:/jacocoagent.jar=destfile=/coverage/coverage.exec" \
+        -rss_limit_mb=65536 \
         -runs=0 \
         corpus 
 
