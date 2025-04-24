@@ -16,6 +16,5 @@ dom4j
 zt-zip
 apache-commons-csv
 jsqlparser
-jackson-core
 apache-commons-imaging
 itext7
