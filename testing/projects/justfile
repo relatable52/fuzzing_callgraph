@@ -64,11 +64,7 @@ build_jar: build_jazzer_image
     if [ ! -d "{{BASE_DIR}}/projects/${PROJECT}" ]; then echo "Project ${PROJECT} not found"; exit 1; fi
     mkdir -p "{{TARGET_PATH}}"
     cd ${PROJECT}
-    if docker image inspect ${PROJECT}:latest > /dev/null 2>&1; then \
-        echo "Project image exists"; \
-    else \
-        docker build --output="{{TARGET_PATH}}" -t ${PROJECT} -f ${PROJECT}/Dockerfile ${PROJECT}; \
-    fi
+    docker build --output="{{TARGET_PATH}}" -t ${PROJECT} -f ${PROJECT}/Dockerfile ${PROJECT}
 
 [private]
 prepare_dictionary EXPERIMENT: 
