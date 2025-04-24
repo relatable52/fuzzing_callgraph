@@ -51,11 +51,13 @@ RUN echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /e
 
 
 ## install OPAL
-ARG OPAL_BRANCH="5.0.0"
+ARG OPAL_BRANCH="develop"
+ARG OPAL_COMMIT_ID="fa37a36181cdcb3135999e76ffe90e617a434f8e"
 ARG OPAL_DIR="/home/$USER/OPAL"
 RUN git clone https://github.com/stg-tud/opal.git ${OPAL_DIR} && \
     cd ${OPAL_DIR} && \
     git checkout ${OPAL_BRANCH} && \
+    git reset --hard ${OPAL_COMMIT_ID} && \
     sbt publishLocal
 
 ## INSTALL SOUFFLE

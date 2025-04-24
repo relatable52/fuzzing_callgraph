@@ -1,3 +1,4 @@
 jsqlparser
 apache-commons-imaging
 itext7
+fastjson2
