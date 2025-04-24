@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1745510786129
+Build-Jdk-Spec: 21
+Bundle-Description: A Free Java-PDF library
+Bundle-DocURL: https://itextpdf.com/
+Bundle-License: http://www.fsf.org/licensing/licenses/agpl-3.0.html
+Bundle-ManifestVersion: 2
+Bundle-Name: iText 7 - kernel
+Bundle-SymbolicName: com.itextpdf.kernel
+Bundle-Vendor: iText Group NV
+Bundle-Version: 7.2.4
+Created-By: Apache Maven Bundle Plugin 5.1.6
+Tool: Bnd-6.2.0.202202251641
