@@ -53,7 +53,7 @@ build_jazzer_image:
 # Recipe to build JCG Docker image
 [private]
 build_jcg_image:
-     if ! docker image inspect jcg:latest > /dev/null 2>&1; then \
+    if ! docker image inspect jcg:latest > /dev/null 2>&1; then \
         echo "JCG image exists"; \
     else \
         docker build -t jcg -f {{BASE_DIR}}/jcg/Dockerfile {{BASE_DIR}}/jcg; \
