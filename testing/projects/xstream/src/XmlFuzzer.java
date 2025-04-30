@@ -11,9 +11,9 @@ import com.thoughtworks.xstream.converters.ConversionException;
 
 class FuzzObj {
   private String string1;
-  
+
   public FuzzObj(String s1){
-    this.string1 = s1;  
+    this.string1 = s1;
   }
 }
 

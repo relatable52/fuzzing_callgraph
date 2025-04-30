@@ -22,7 +22,7 @@ RUN mvn package org.apache.maven.plugins:maven-shade-plugin:3.2.4:shade $MAVEN_A
 RUN CURRENT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate \
   -Dexpression=project.version -q -DforceStdout) && \
   mkdir -p /output && \
-  cp target/jsqlparser-${CURRENT_VERSION}.jar /output/jsqlparser.jar 
+  cp target/jsqlparser-${CURRENT_VERSION}.jar /output/jsqlparser.jar
 RUN mkdir -p /classes && cp -r target/classes/* /classes/
 
 RUN mkdir -p /repo && cp /output/*.jar /repo/

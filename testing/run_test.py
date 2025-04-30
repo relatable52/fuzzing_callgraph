@@ -1,21 +1,20 @@
-from pathlib import Path
-import subprocess
-from datetime import datetime
-import os
 import logging
+import os
+import subprocess
+from pathlib import Path
+
 
 # Function to run a just target
 def run_just(program, target):
     env = os.environ.copy()
     try:
         subprocess.run(
-            ["just", "--dotenv-path", f"{program}/.env", target],
-            check=True,
-            env=env
+            ["just", "--dotenv-path", f"{program}/.env", target], check=True, env=env
         )
         logging.info(f"Ran target: {target} for {program}")
     except subprocess.CalledProcessError as e:
         logging.error(f"Failed target: {target} for {program} | {e}")
+
 
 # Paths
 to_run_path = Path("projects/to_run.txt")
@@ -47,7 +46,7 @@ with to_run_path.open() as f:
 
         run_just(program, "projects/coverage_fuzzing")
         run_just(program, "projects/dynamic_callgraph_fuzzing")
-        
+
         logging.info(f"Finished program: {program}")
 
 logging.info("Script ended")

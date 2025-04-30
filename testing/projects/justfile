@@ -67,7 +67,7 @@ build_jar: build_jazzer_image
     docker build --output="{{TARGET_PATH}}" -t ${PROJECT} -f ${PROJECT}/Dockerfile ${PROJECT}
 
 [private]
-prepare_dictionary EXPERIMENT: 
+prepare_dictionary EXPERIMENT:
     mkdir -p {{TARGET_PATH}}/{{EXPERIMENT}}
 
     chmod +x "{{BASE_DIR}}/projects/{{PROJECT}}/prepare_dictionary.sh"
@@ -142,7 +142,7 @@ coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT
         --jvm_args="-Xmx64g -javaagent\\:/jacocoagent.jar=destfile=/coverage/coverage.exec" \
         -rss_limit_mb=65536 \
         -runs=0 \
-        corpus 
+        corpus
 
 [private]
 coverage_report EXPERIMENT COVERAGE_DIR EXCLUDE_CLASSES:

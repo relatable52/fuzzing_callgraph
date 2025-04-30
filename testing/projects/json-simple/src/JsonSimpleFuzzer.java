@@ -12,7 +12,7 @@ public class JsonSimpleFuzzer {
         try{
             JSONObject srcObj = new JSONObject();
             srcObj.put("item1", fuzzingString);
-            
+
             StringWriter out = new StringWriter();
             srcObj.writeJSONString(out);
             String jsonText = out.toString();
@@ -24,7 +24,7 @@ public class JsonSimpleFuzzer {
             if (!destObj.equals(srcObj)) {
                 throw new IllegalStateException("Decoded object: "
                  + destObj.toString() + " doesn't match original object: " + srcObj.toString());
-            }            
+            }
         } catch (Exception e) {}
 
         try {

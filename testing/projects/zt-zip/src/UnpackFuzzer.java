@@ -26,6 +26,6 @@ class UnpackFuzzer {
             ZipUtil.repack(is, new File(dir), level);
             IOUtils.closeQuietly(is);
         } catch (Exception e) {
-        } 
+        }
     }
 }

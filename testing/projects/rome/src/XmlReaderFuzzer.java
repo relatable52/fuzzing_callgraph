@@ -17,6 +17,6 @@ public class XmlReaderFuzzer {
     catch( Exception e){
       return;
     }
-  
+
   }
 }

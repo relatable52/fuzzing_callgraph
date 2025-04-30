@@ -20,14 +20,14 @@ public class JsonFlattenerFuzzer {
             JsonFlattenerFactory jsonFlattenerFactory = jsonFlattenerFactory(data.pickValue(printModes), data.pickValue(flattenModes), data.pickValue(stringEscapePolicies), data.pickValue(jsonCores));
             JsonUnflattenerFactory jsonUnflattenerFactory = jsonUnflattenerFactory(data.pickValue(printModes), data.pickValue(flattenModes), data.pickValue(jsonCores));
             String json = data.consumeRemainingAsString();
-            
+
             try {
                 JsonFlattener jf = jsonFlattenerFactory.build(json);
 
                 jf.flatten();
                 jf.flattenAsMap();
             } catch (Exception e) {}
-            
+
             try {
                 JsonUnflattener ju = jsonUnflattenerFactory.build(json);
 

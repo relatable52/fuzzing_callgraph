@@ -4,17 +4,14 @@ set shell := ["bash", "-cu"]
 OUTPUT_DIR := env("OUTPUT_DIR", "output")
 CALLGRAPH := env("CALLGRAPH", "callgraph")
 
-build:
-    docker build -t data-processor .
-
 process_raw PROGRAM:
-    docker run --rm -v {{OUTPUT_DIR}}:/output -v {{CALLGRAPH}}:/callgraph data-processor python scripts/process_raw.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/process_raw_{{PROGRAM}}.log"
+    python scripts/process_raw.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/process_raw_{{PROGRAM}}.log"
 
 process_tagged PROGRAM:
-    docker run --rm -v {{OUTPUT_DIR}}:/output -v {{CALLGRAPH}}:/callgraph data-processor python scripts/process_tagged.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/process_tagged_{{PROGRAM}}.log"
+    python scripts/process_tagged.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/process_tagged_{{PROGRAM}}.log"
 
 process_filtered PROGRAM:
-    docker run --rm -v {{OUTPUT_DIR}}:/output -v {{CALLGRAPH}}:/callgraph data-processor python scripts/process_filtered.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/process_filtered_{{PROGRAM}}.log"
+    python scripts/process_filtered.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/process_filtered_{{PROGRAM}}.log"
 
 extract_sources PROGRAM:
-    docker run --rm -v {{OUTPUT_DIR}}:/output -v {{CALLGRAPH}}:/callgraph data-processor python scripts/extract_sources.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/extract_sources_{{PROGRAM}}.log"
+    python scripts/extract_sources.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/extract_sources_{{PROGRAM}}.log"

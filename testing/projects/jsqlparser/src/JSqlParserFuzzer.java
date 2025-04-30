@@ -23,7 +23,7 @@ class JSqlParserFuzzer {
                 );
             } catch (JSQLParserException e) {
             }
-    
+
             try {
                 CCJSqlParserUtil.parseStatements(
                         sqlScript,
@@ -35,12 +35,12 @@ class JSqlParserFuzzer {
                 );
             } catch (JSQLParserException e) {
             }
-    
+
             try {
                 CCJSqlParserUtil.parseAST(ast);
             } catch (JSQLParserException e) {
             }
-    
+
             try {
                 CCJSqlParserUtil.parseExpression(
                         expression,
@@ -55,7 +55,7 @@ class JSqlParserFuzzer {
             } catch (ArrayIndexOutOfBoundsException | TokenMgrException e) {
                 // Needed to catch to enable fuzzer to continue
             }
-    
+
             try {
                 CCJSqlParserUtil.parseCondExpression(
                         condExp,

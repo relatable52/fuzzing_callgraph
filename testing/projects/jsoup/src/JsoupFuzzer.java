@@ -7,7 +7,7 @@ import org.jsoup.parser.Parser;
 public class JsoupFuzzer {
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
         String input = data.consumeRemainingAsString();
-        
+
         try{
             Jsoup.parse(input);
         } catch (Exception e) {}
