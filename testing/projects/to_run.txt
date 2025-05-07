@@ -1,3 +1,2 @@
-jsqlparser
 apache-commons-imaging
 itext7
