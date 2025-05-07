@@ -5,23 +5,14 @@ from pathlib import Path
 
 
 # Function to run a just target
-def run_just(program, target, extra_args=None):
-    # Copy environment variables
+def run_just(program, target):
     env = os.environ.copy()
-
-    # Default arguments for just command
-    command = ["just", "--dotenv-path", f"{program}/.env", target]
-
-    # Add extra arguments if provided
-    if extra_args:
-        command.extend(
-            extra_args
-        )  # This will append the extra arguments to the command list
-
+    env["TEST"] = "true"
     try:
-        # Run the command with subprocess
-        subprocess.run(command, check=True, env=env)
-        logging.info(f"Ran target: {target} for {program} with arguments: {extra_args}")
+        subprocess.run(
+            ["just", "--dotenv-path", f"{program}/.env", target], check=True, env=env
+        )
+        logging.info(f"Ran target: {target} for {program}")
     except subprocess.CalledProcessError as e:
         logging.error(f"Failed target: {target} for {program} | {e}")
 
@@ -54,7 +45,7 @@ with to_run_path.open() as f:
 
         logging.info(f"Running: {program}")
 
-        run_just(program, "projects/coverage_fuzzing", ["FUZZING_TIME=60"])
+        run_just(program, "projects/coverage_fuzzing")
         run_just(program, "projects/dynamic_callgraph_fuzzing")
 
         logging.info(f"Finished program: {program}")
