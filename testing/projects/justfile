@@ -98,7 +98,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
     docker rm -f "{{FUZZING_CONTAINER}}"
     docker run -i \
         --name "{{FUZZING_CONTAINER}}" \
-        --mount type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly \
+        --mount type=bind,source="{{TARGET_PATH}}/repo",target=/repo,readonly=false \
         --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/corpus",target=/corpus \
         --mount type=bind,source="{{PROJECT_PATH}}/resources",target=/resources/,readonly \
         --mount type=bind,source="{{TARGET_PATH}}/{{EXPERIMENT}}/fuzzing_coverage/coverage.exec",target=/fuzzing/coverage.exec \
