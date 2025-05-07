@@ -1,11 +1,24 @@
 import logging
 import os
+from argparse import ArgumentParser
 from glob import glob
 
 import pandas as pd
 
 from .config import OUTPUT_DIR, RAW_CALLGRAPH, STATICCG
-from .utils import parse_args, read_json
+from .utils import read_json
+
+
+def parse_args():
+    parser = ArgumentParser(description="Process raw call graph data")
+    parser.add_argument(
+        "-p",
+        "--program",
+        type=str,
+        required=True,
+        help="Name of the program to process (e.g., 'jython', 'javac', etc.)",
+    )
+    return parser.parse_args()
 
 
 def get_cg_paths(program: str) -> dict:
@@ -74,19 +87,15 @@ def convert_cg(data: dict) -> pd.DataFrame:
     """
     Process the call graph data into a DataFrame.
     """
-
     raw_edges = []
-    all_methods = set()
 
     for m in data["reachableMethods"]:
         caller = format_method(m["method"])
-        caller_class = m["method"]["declaringClass"]
         for cs in m.get("callSites", []):
             line = cs.get("line", -1)
             pc = cs.get("pc", -1)
             for tgt in cs.get("targets", []):
                 callee = format_method(tgt)
-                callee_class = tgt["declaringClass"]
 
                 raw_edges.append(
                     {"caller": caller, "callee": callee, "line": line, "pc": pc}
@@ -116,4 +125,10 @@ def main():
     for name, path in cg_paths.items():
         output_name = name.lower().replace("/", "_") + ".csv"
         output_path = os.path.join(OUTPUT_DIR, program, output_name)
-        process_cg(path, output_path)
+        logging.info(f"Processing {name} from {path} to {output_path}")
+        try:
+            process_cg(path, output_path)
+        except Exception as e:
+            logging.error(f"Error processing {name}: {e}")
+            continue
+        logging.info(f"Processed {name} and saved to {output_path}")
