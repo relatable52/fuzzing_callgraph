@@ -27,6 +27,7 @@ def get_cg_paths(program: str) -> dict:
     Get the paths to the call graphs for a given program.
     """
     program_dir = os.path.join(RAW_CALLGRAPH, program)
+    print(program_dir)
 
     if not os.path.exists(program_dir):
         logger.error(f"Program directory {program_dir} does not exist.")
