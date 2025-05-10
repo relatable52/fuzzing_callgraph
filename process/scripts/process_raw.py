@@ -35,9 +35,7 @@ def get_cg_paths(program: str) -> dict:
 
     output_dir = os.path.join(OUTPUT_DIR, program)
     os.makedirs(output_dir, exist_ok=True)
-    print(
-        f"Output directory: {output_dir}, {glob(program_dir + '**/cg.json', recursive=True)}"
-    )
+    print(f"Output directory: {output_dir}, {glob(program_dir, recursive=True)}")
 
     fuzzing_dyncg = glob(program_dir + "**/fuzzing/**/cg.json", recursive=True)[0]
     fuzzing_seed_dyncg = glob(
