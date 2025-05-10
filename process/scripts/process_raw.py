@@ -119,6 +119,7 @@ def process_cg(json_path: str, output_path: str) -> None:
 def main():
     args = parse_args()
     program = args.program
+    print(program)
 
     cg_paths = get_cg_paths(program)
     if not cg_paths:
@@ -128,6 +129,7 @@ def main():
         output_name = name.lower().replace("/", "_") + ".csv"
         output_path = os.path.join(OUTPUT_DIR, program, output_name)
         logger.info(f"Processing {name} from {path} to {output_path}")
+        print(name)
 
         try:
             df = process_cg(path, output_path)
