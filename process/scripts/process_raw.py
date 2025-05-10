@@ -122,6 +122,7 @@ def main():
     print(program)
 
     cg_paths = get_cg_paths(program)
+    print(cg_paths)
     if not cg_paths:
         return
 
