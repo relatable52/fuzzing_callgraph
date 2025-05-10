@@ -27,7 +27,6 @@ def get_cg_paths(program: str) -> dict:
     Get the paths to the call graphs for a given program.
     """
     program_dir = os.path.join(RAW_CALLGRAPH, program)
-    print(program_dir)
 
     if not os.path.exists(program_dir):
         logger.error(f"Program directory {program_dir} does not exist.")
@@ -36,6 +35,7 @@ def get_cg_paths(program: str) -> dict:
 
     output_dir = os.path.join(OUTPUT_DIR, program)
     os.makedirs(output_dir, exist_ok=True)
+    logger.info(f"Output directory created: {output_dir}, {program_dir}")
 
     fuzzing_dyncg = glob(program_dir + "**/fuzzing/**/cg.json", recursive=True)[0]
     fuzzing_seed_dyncg = glob(
@@ -120,18 +120,16 @@ def process_cg(json_path: str, output_path: str) -> None:
 def main():
     args = parse_args()
     program = args.program
-    print(program)
 
     cg_paths = get_cg_paths(program)
-    print(cg_paths)
     if not cg_paths:
+        logger.error(f"No call graph paths found for program: {program}")
         return
 
     for name, path in cg_paths.items():
         output_name = name.lower().replace("/", "_") + ".csv"
         output_path = os.path.join(OUTPUT_DIR, program, output_name)
         logger.info(f"Processing {name} from {path} to {output_path}")
-        print(name)
 
         try:
             df = process_cg(path, output_path)
@@ -163,5 +161,4 @@ def main():
 
 
 if __name__ == "__main__":
-    print("Hello, World!")
     main()
