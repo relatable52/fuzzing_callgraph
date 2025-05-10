@@ -117,7 +117,7 @@ fuzz EXPERIMENT: (prepare_dictionary EXPERIMENT) build_jar build_jazzer_image &&
         -timeout=60 \
         -rss_limit_mb=65536 \
         -dict=dict.txt \
-        corpus
+        corpus && find "/repo" -name "*.jar" && jar tf "repo/"
 
 [private]
 coverage EXPERIMENT: build_jar build_jazzer_image && (coverage_report EXPERIMENT "coverage" "false")
