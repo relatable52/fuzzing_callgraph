@@ -31,7 +31,7 @@ def get_cg_paths(program: str) -> dict:
     if not os.path.exists(program_dir):
         logger.error(f"Program directory {program_dir} does not exist.")
         return
-    logger.info(f"Processing raw data for program: {program}")
+    logger.warning(f"Processing raw data for program: {program}")
 
     output_dir = os.path.join(OUTPUT_DIR, program)
     os.makedirs(output_dir, exist_ok=True)
