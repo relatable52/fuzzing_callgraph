@@ -3,9 +3,8 @@ from argparse import ArgumentParser
 from glob import glob
 
 import pandas as pd
-
-from .config import OUTPUT_DIR, RAW_CALLGRAPH, STATICCG
-from .utils import get_logger, read_json
+from config import OUTPUT_DIR, RAW_CALLGRAPH, STATICCG
+from utils import get_logger, read_json
 
 # Initialize logger
 logger = get_logger("process_raw")
