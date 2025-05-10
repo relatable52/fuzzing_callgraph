@@ -156,3 +156,7 @@ def main():
         logger.warning("No call graph data to combine.")
 
     logger.info(f"Processed {name} and saved to {output_path}")
+
+
+if __name__ == "__main__":
+    main()
