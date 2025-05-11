@@ -1,9 +1,10 @@
+import csv
 import logging
 import os
 from argparse import ArgumentParser
+from collections import defaultdict
 from glob import glob
 
-import pandas as pd
 from config import OUTPUT_DIR, RAW_CALLGRAPH, STATICCG
 from utils import read_json
 
@@ -90,12 +91,8 @@ def format_method(method: dict) -> str:
     )
 
 
-def convert_cg(data: dict) -> pd.DataFrame:
-    """
-    Process the call graph data into a DataFrame.
-    """
-    raw_edges = []
-
+def convert_cg_to_rows(data: dict):
+    rows = []
     for m in data["reachableMethods"]:
         caller = format_method(m["method"])
         for cs in m.get("callSites", []):
@@ -103,23 +100,24 @@ def convert_cg(data: dict) -> pd.DataFrame:
             pc = cs.get("pc", -1)
             for tgt in cs.get("targets", []):
                 callee = format_method(tgt)
-
-                raw_edges.append(
-                    {"method": caller, "target": callee, "offset": line, "pc": pc}
-                )
-
-    df = pd.DataFrame(raw_edges)
-    return df
+                rows.append([caller, line, callee, pc])
+    return rows
 
 
-def process_cg(json_path: str, output_path: str) -> None:
-    """
-    Process the call graph JSON file and save it as a CSV file.
-    """
+def process_cg(json_path: str, output_path: str):
     data = read_json(json_path)
-    df = convert_cg(data)
-    df.to_csv(output_path, index=False)
-    return df
+
+    rows = convert_cg_to_rows(data)
+
+    with open(output_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["method", "offset", "target", "pc"])
+        writer.writerows(rows)
+
+    return rows
+
+
+from collections import defaultdict
 
 
 def main():
@@ -133,6 +131,10 @@ def main():
         logging.error(f"No call graph paths found for program: {program}")
         return
 
+    combined_dict = defaultdict(
+        dict
+    )  # key: (method, offset, target), value: dict of sources
+
     for name, path in cg_paths.items():
         output_name = name.lower().replace("/", "_") + ".csv"
         output_path = os.path.join(OUTPUT_DIR, program, output_name)
@@ -140,32 +142,29 @@ def main():
         print(name)
 
         try:
-            df = process_cg(path, output_path)
-            df[name] = 1
-            df = df[["method", "offset", "target", name]]
-            if combined_df is None:
-                combined_df = df
-            else:
-                combined_df = pd.merge(
-                    combined_df, df, on=["method", "offset", "target"], how="outer"
-                )
+            rows = process_cg(path, output_path)
+
+            for row in rows:
+                method, offset, target, pc = row
+                key = (method, offset, target)
+                combined_dict[key][name] = 1
+
         except Exception as e:
             logging.error(f"Error processing {name}: {e}")
             continue
 
-    # if combined_df is not None:
-    #     combined_df.fillna(0, inplace=True)
+    # Optionally write combined_dict to CSV
+    output_combined = os.path.join(OUTPUT_DIR, program, "combined.csv")
+    all_sources = sorted(cg_paths.keys())
+    with open(output_combined, "w", newline="") as f:
+        writer = csv.writer(f)
+        header = ["method", "offset", "target"] + all_sources
+        writer.writerow(header)
 
-    #     analysis_methods = [name for name in cg_paths.keys()]
-    #     combined_df[analysis_methods] = combined_df[analysis_methods].astype(int)
-
-    #     combination_path = os.path.join(OUTPUT_DIR, program, "combination.csv")
-    #     combined_df.to_csv(combination_path, index=False)
-    #     logging.info(f"Combined call graph saved to {combination_path}")
-    # else:
-    #     logging.warning("No call graph data to combine.")
-
-    # logging.info(f"Processed {name} and saved to {output_path}")
+        for (method, offset, target), sources in combined_dict.items():
+            row = [method, offset, target]
+            row += [sources.get(src, 0) for src in all_sources]
+            writer.writerow(row)
 
 
 if __name__ == "__main__":
