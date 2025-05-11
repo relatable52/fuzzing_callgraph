@@ -38,9 +38,10 @@ def get_cg_paths(program: str) -> dict:
 
     fuzzing_dyncg = glob(program_dir + "/**/fuzzing/**/cg.json", recursive=True)[0]
     print(fuzzing_dyncg)
-    # fuzzing_seed_dyncg = glob(
-    #     program_dir + "/**/fuzzing_seed/**/cg.json", recursive=True
-    # )[0]
+    fuzzing_seed_dyncg = glob(
+        program_dir + "/**/fuzzing_seed/**/cg.json", recursive=True
+    )[0]
+    print(fuzzing_seed_dyncg)
     # print(fuzzing_dyncg)
     # print(fuzzing_seed_dyncg)
     # static_cg = [
