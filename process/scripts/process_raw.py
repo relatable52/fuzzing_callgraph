@@ -51,16 +51,16 @@ def get_cg_paths(program: str) -> dict:
     ]
     print(static_cg)
 
-    # cg_paths = {
-    #     "Dynamic/fuzzing": fuzzing_dyncg,
-    #     "Dynamic/fuzzingseed": fuzzing_seed_dyncg,
-    # }
-    # for alg, path in zip(STATICCG, static_cg):
-    #     cg_paths[alg] = path
+    cg_paths = {
+        "Dynamic/fuzzing": fuzzing_dyncg,
+        "Dynamic/fuzzingseed": fuzzing_seed_dyncg,
+    }
+    for alg, path in zip(STATICCG, static_cg):
+        cg_paths[alg] = path
 
-    # print(cg_paths)
+    print(cg_paths)
 
-    # return cg_paths
+    return cg_paths
 
 
 def format_method(method: dict) -> str:
