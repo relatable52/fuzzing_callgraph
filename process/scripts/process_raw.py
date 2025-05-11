@@ -1,13 +1,11 @@
+import logging
 import os
 from argparse import ArgumentParser
 from glob import glob
 
 import pandas as pd
 from config import OUTPUT_DIR, RAW_CALLGRAPH, STATICCG
-from utils import get_logger, read_json
-
-# Initialize logger
-logger = get_logger("process_raw")
+from utils import read_json
 
 
 def parse_args():
@@ -29,9 +27,9 @@ def get_cg_paths(program: str) -> dict:
     program_dir = os.path.join(RAW_CALLGRAPH, program)
 
     if not os.path.exists(program_dir):
-        logger.error(f"Program directory {program_dir} does not exist.")
+        logging.error(f"Program directory {program_dir} does not exist.")
         return
-    logger.warning(f"Processing raw data for program: {program}")
+    logging.warning(f"Processing raw data for program: {program}")
 
     print(f"Processing raw data for program: {program}")
 
@@ -132,13 +130,13 @@ def main():
     cg_paths = get_cg_paths(program)
     print(cg_paths)
     if not cg_paths:
-        logger.error(f"No call graph paths found for program: {program}")
+        logging.error(f"No call graph paths found for program: {program}")
         return
 
     # for name, path in cg_paths.items():
     #     output_name = name.lower().replace("/", "_") + ".csv"
     #     output_path = os.path.join(OUTPUT_DIR, program, output_name)
-    #     logger.info(f"Processing {name} from {path} to {output_path}")
+    #     logging.info(f"Processing {name} from {path} to {output_path}")
     #     print(name)
 
     #     try:
@@ -152,7 +150,7 @@ def main():
     #                 combined_df, df, on=["method", "offset", "target"], how="outer"
     #             )
     #     except Exception as e:
-    #         logger.error(f"Error processing {name}: {e}")
+    #         logging.error(f"Error processing {name}: {e}")
     #         continue
 
     # if combined_df is not None:
@@ -163,11 +161,11 @@ def main():
 
     #     combination_path = os.path.join(OUTPUT_DIR, program, "combination.csv")
     #     combined_df.to_csv(combination_path, index=False)
-    #     logger.info(f"Combined call graph saved to {combination_path}")
+    #     logging.info(f"Combined call graph saved to {combination_path}")
     # else:
-    #     logger.warning("No call graph data to combine.")
+    #     logging.warning("No call graph data to combine.")
 
-    # logger.info(f"Processed {name} and saved to {output_path}")
+    # logging.info(f"Processed {name} and saved to {output_path}")
 
 
 if __name__ == "__main__":
