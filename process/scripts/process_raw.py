@@ -36,31 +36,31 @@ def get_cg_paths(program: str) -> dict:
     output_dir = os.path.join(OUTPUT_DIR, program)
     os.makedirs(output_dir, exist_ok=True)
 
-    fuzzing_dyncg = glob(program_dir + "/**/fuzzing/**/cg.json", recursive=True)[0]
-    fuzzing_seed_dyncg = glob(
-        program_dir + "/**/fuzzing_seed/**/cg.json", recursive=True
-    )[0]
-    print(fuzzing_dyncg)
-    print(fuzzing_seed_dyncg)
-    static_cg = [
-        glob(
-            os.path.join(program_dir, f"/**/staticcg/**/{alg}/cg.json"),
-            recursive=True,
-        )[0]
-        for alg in STATICCG
-    ]
-    print(static_cg)
+    # fuzzing_dyncg = glob(program_dir + "/**/fuzzing/**/cg.json", recursive=True)[0]
+    # fuzzing_seed_dyncg = glob(
+    #     program_dir + "/**/fuzzing_seed/**/cg.json", recursive=True
+    # )[0]
+    # print(fuzzing_dyncg)
+    # print(fuzzing_seed_dyncg)
+    # static_cg = [
+    #     glob(
+    #         os.path.join(program_dir, f"/**/staticcg/**/{alg}/cg.json"),
+    #         recursive=True,
+    #     )[0]
+    #     for alg in STATICCG
+    # ]
+    # print(static_cg)
 
-    cg_paths = {
-        "Dynamic/fuzzing": fuzzing_dyncg,
-        "Dynamic/fuzzingseed": fuzzing_seed_dyncg,
-    }
-    for alg, path in zip(STATICCG, static_cg):
-        cg_paths[alg] = path
+    # cg_paths = {
+    #     "Dynamic/fuzzing": fuzzing_dyncg,
+    #     "Dynamic/fuzzingseed": fuzzing_seed_dyncg,
+    # }
+    # for alg, path in zip(STATICCG, static_cg):
+    #     cg_paths[alg] = path
 
-    print(cg_paths)
+    # print(cg_paths)
 
-    return cg_paths
+    # return cg_paths
 
 
 def format_method(method: dict) -> str:
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     program = "fastcsv"
     print(program)
 
-    # cg_paths = get_cg_paths(program)
-    # print(cg_paths)
+    cg_paths = get_cg_paths(program)
+    print(cg_paths)
     # if not cg_paths:
     #     logging.error(f"No call graph paths found for program: {program}")
