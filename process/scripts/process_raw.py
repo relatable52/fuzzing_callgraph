@@ -133,25 +133,25 @@ def main():
         logging.error(f"No call graph paths found for program: {program}")
         return
 
-    # for name, path in cg_paths.items():
-    #     output_name = name.lower().replace("/", "_") + ".csv"
-    #     output_path = os.path.join(OUTPUT_DIR, program, output_name)
-    #     logging.info(f"Processing {name} from {path} to {output_path}")
-    #     print(name)
+    for name, path in cg_paths.items():
+        output_name = name.lower().replace("/", "_") + ".csv"
+        output_path = os.path.join(OUTPUT_DIR, program, output_name)
+        logging.info(f"Processing {name} from {path} to {output_path}")
+        print(name)
 
-    #     try:
-    #         df = process_cg(path, output_path)
-    #         df[name] = 1
-    #         df = df[["method", "offset", "target", name]]
-    #         if combined_df is None:
-    #             combined_df = df
-    #         else:
-    #             combined_df = pd.merge(
-    #                 combined_df, df, on=["method", "offset", "target"], how="outer"
-    #             )
-    #     except Exception as e:
-    #         logging.error(f"Error processing {name}: {e}")
-    #         continue
+        # try:
+        #     df = process_cg(path, output_path)
+        #     df[name] = 1
+        #     df = df[["method", "offset", "target", name]]
+        #     if combined_df is None:
+        #         combined_df = df
+        #     else:
+        #         combined_df = pd.merge(
+        #             combined_df, df, on=["method", "offset", "target"], how="outer"
+        #         )
+        # except Exception as e:
+        #     logging.error(f"Error processing {name}: {e}")
+        #     continue
 
     # if combined_df is not None:
     #     combined_df.fillna(0, inplace=True)
