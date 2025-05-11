@@ -171,8 +171,9 @@ def main():
 if __name__ == "__main__":
     print("Starting process_raw.py")
     program = "fastcsv"
+    print(program)
 
-    cg_paths = get_cg_paths(program)
-    print(cg_paths)
-    if not cg_paths:
-        logging.error(f"No call graph paths found for program: {program}")
+    # cg_paths = get_cg_paths(program)
+    # print(cg_paths)
+    # if not cg_paths:
+    #     logging.error(f"No call graph paths found for program: {program}")
