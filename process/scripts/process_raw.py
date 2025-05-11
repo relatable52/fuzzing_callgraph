@@ -132,6 +132,7 @@ def main():
         logger.info(f"Processing {name} from {path} to {output_path}")
 
         try:
+            print(f"Processing {name} from {path} to {output_path}")
             df = process_cg(path, output_path)
             df[name] = 1
             df = df[["method", "offset", "target", name]]
