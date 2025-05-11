@@ -127,6 +127,7 @@ def process_cg(json_path: str, output_path: str) -> None:
 def main():
     args = parse_args()
     program = args.program
+    print(args)
 
     cg_paths = get_cg_paths(program)
     print(cg_paths)
