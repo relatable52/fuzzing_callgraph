@@ -139,19 +139,19 @@ def main():
         logging.info(f"Processing {name} from {path} to {output_path}")
         print(name)
 
-        # try:
-        #     df = process_cg(path, output_path)
-        #     df[name] = 1
-        #     df = df[["method", "offset", "target", name]]
-        #     if combined_df is None:
-        #         combined_df = df
-        #     else:
-        #         combined_df = pd.merge(
-        #             combined_df, df, on=["method", "offset", "target"], how="outer"
-        #         )
-        # except Exception as e:
-        #     logging.error(f"Error processing {name}: {e}")
-        #     continue
+        try:
+            df = process_cg(path, output_path)
+            df[name] = 1
+            df = df[["method", "offset", "target", name]]
+            if combined_df is None:
+                combined_df = df
+            else:
+                combined_df = pd.merge(
+                    combined_df, df, on=["method", "offset", "target"], how="outer"
+                )
+        except Exception as e:
+            logging.error(f"Error processing {name}: {e}")
+            continue
 
     # if combined_df is not None:
     #     combined_df.fillna(0, inplace=True)
