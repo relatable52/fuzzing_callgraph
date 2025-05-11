@@ -55,6 +55,8 @@ def get_cg_paths(program: str) -> dict:
     for alg, path in zip(STATICCG, static_cg):
         cg_paths[alg] = path
 
+    print(cg_paths)
+
     return cg_paths
 
 
