@@ -42,7 +42,8 @@ def get_cg_paths(program: str) -> dict:
     )[0]
     static_cg = [
         glob(
-            os.path.join(program_dir, f"/staticcg/**/{alg}/**/cg.json"), recursive=True
+            os.path.join(program_dir, f"/**/staticcg/**/{alg}/**/cg.json"),
+            recursive=True,
         )[0]
         for alg in STATICCG
     ]
