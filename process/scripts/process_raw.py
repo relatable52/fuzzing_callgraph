@@ -33,6 +33,8 @@ def get_cg_paths(program: str) -> dict:
         return
     logger.warning(f"Processing raw data for program: {program}")
 
+    print(f"Processing raw data for program: {program}")
+
     output_dir = os.path.join(OUTPUT_DIR, program)
     os.makedirs(output_dir, exist_ok=True)
 
