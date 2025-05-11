@@ -170,9 +170,7 @@ def main():
 
 if __name__ == "__main__":
     print("Starting process_raw.py")
-    args = parse_args()
-    program = args.program
-    print(program)
+    program = "fastcsv"
 
     cg_paths = get_cg_paths(program)
     print(cg_paths)
