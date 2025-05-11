@@ -42,16 +42,14 @@ def get_cg_paths(program: str) -> dict:
         program_dir + "/**/fuzzing_seed/**/cg.json", recursive=True
     )[0]
     print(fuzzing_seed_dyncg)
-    # print(fuzzing_dyncg)
-    # print(fuzzing_seed_dyncg)
-    # static_cg = [
-    #     glob(
-    #         os.path.join(program_dir, f"/**/staticcg/**/{alg}/cg.json"),
-    #         recursive=True,
-    #     )[0]
-    #     for alg in STATICCG
-    # ]
-    # print(static_cg)
+    static_cg = [
+        glob(
+            program_dir + f"/**/staticcg/**/{alg}/cg.json",
+            recursive=True,
+        )[0]
+        for alg in STATICCG
+    ]
+    print(static_cg)
 
     # cg_paths = {
     #     "Dynamic/fuzzing": fuzzing_dyncg,
