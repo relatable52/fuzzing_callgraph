@@ -127,7 +127,7 @@ def process_cg(json_path: str, output_path: str) -> None:
 def main():
     args = parse_args()
     program = args.program
-    print(args)
+    print(program)
 
     cg_paths = get_cg_paths(program)
     print(cg_paths)
@@ -172,3 +172,4 @@ def main():
 
 if __name__ == "__main__":
     print("Starting process_raw.py")
+    main()
