@@ -122,6 +122,7 @@ def main():
     program = args.program
 
     cg_paths = get_cg_paths(program)
+    print(cg_paths)
     if not cg_paths:
         logger.error(f"No call graph paths found for program: {program}")
         return
@@ -130,9 +131,9 @@ def main():
         output_name = name.lower().replace("/", "_") + ".csv"
         output_path = os.path.join(OUTPUT_DIR, program, output_name)
         logger.info(f"Processing {name} from {path} to {output_path}")
+        print(name)
 
         try:
-            print(f"Processing {name} from {path} to {output_path}")
             df = process_cg(path, output_path)
             df[name] = 1
             df = df[["method", "offset", "target", name]]
