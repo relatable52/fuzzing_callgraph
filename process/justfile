@@ -6,3 +6,6 @@ CALLGRAPH := env("CALLGRAPH", "callgraph")
 
 process_raw PROGRAM:
     python scripts/process_raw.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/process_raw_{{PROGRAM}}.log"
+
+extract_source PROGRAM:
+    python scripts/extract_source.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/extract_source_{{PROGRAM}}.log"
