@@ -91,3 +91,7 @@ def main():
 
     # Write the matched methods to methods.txt
     write_methods_to_file(methods, methods_output_path)
+
+
+if __name__ == "__main__":
+    main()
