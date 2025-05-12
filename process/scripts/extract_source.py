@@ -3,6 +3,7 @@ import os
 import re
 from argparse import ArgumentParser
 
+import javalang
 from config import OUTPUT_DIR
 
 
