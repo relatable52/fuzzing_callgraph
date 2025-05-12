@@ -18,13 +18,14 @@ def parse_args():
     return parser.parse_args()
 
 
-def glob_to_regex(pattern):
+def glob_to_regex(pattern: str) -> str:
+    # Convert /-separated package names to dot-separated for method matching
+    pattern = pattern.replace("/", ".")
     # Escape special regex characters
     pattern = re.escape(pattern)
     # Replace escaped glob wildcards with regex equivalents
     pattern = pattern.replace(r"\*\*", ".*")  # '**' -> '.*'
-    pattern = pattern.replace(r"\*", "[^.]*")  # '*' -> '[^.]*'
-    # Match the entire string
+    pattern = pattern.replace(r"\*", "[^.]*")  # '*'  -> any identifier part
     return "^" + pattern + "$"
 
 
