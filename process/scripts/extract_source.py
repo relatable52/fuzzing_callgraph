@@ -55,6 +55,7 @@ def get_jar_path(program: str) -> str:
     jar_file = cp_list[0]["path"]
 
     jar_path = os.path.join(jar_dir, jar_file)
+    print(jar_dir, jar_path)
 
     if not os.path.exists(jar_path):
         raise FileNotFoundError(f"JAR path {jar_path} does not exist.")
