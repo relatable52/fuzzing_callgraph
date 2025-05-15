@@ -1,5 +1,6 @@
 import json
 import logging
+import subprocess
 
 
 def read_json(file_path: str):
@@ -36,3 +37,12 @@ def get_logger(name: str = "app_logger") -> logging.Logger:
     logger.addHandler(console_handler)
 
     return logger
+
+
+def list_classes(jar_path):
+    """List all class files in the JAR."""
+    result = subprocess.run(["jar", "tf", jar_path], capture_output=True, text=True)
+    class_files = [
+        line for line in result.stdout.splitlines() if line.endswith(".class")
+    ]
+    return class_files
