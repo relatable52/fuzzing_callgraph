@@ -150,7 +150,7 @@ def extract_method_from_source(source_file: str, methods: set):
         for method_node in class_node.methods:
             method_name = method_node.name
             startpos, endpos, startline, endline = get_method_start_end(
-                tree, method_node
+                method_node, tree
             )
             method_text, startline, endline, lex = get_method_text(
                 codelines, startpos, endpos, startline, endline, lex
