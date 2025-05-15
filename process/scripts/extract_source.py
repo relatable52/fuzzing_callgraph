@@ -219,6 +219,7 @@ def main():
     print(CODE_DIR + f"/**/{pattern[:-7]}/**/*.java")
 
     methods = {}
+    print(filtered_methods)
     for source_file in source_files:
         methods.update(extract_method_from_source(source_file, filtered_methods))
 
