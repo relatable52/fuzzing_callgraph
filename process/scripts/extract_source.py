@@ -159,6 +159,8 @@ def extract_method_from_source(source_file: str, methods: set):
             matched_methods = get_matched_methods(
                 method_name, class_name, package_name, params, return_type, methods
             )
+            print(matched_methods)
+            print(method_name, class_name, package_name, params, return_type)
             assert (
                 len(matched_methods) == 1
             ), f"Multiple matched methods found for {method_name} in {class_name}"
