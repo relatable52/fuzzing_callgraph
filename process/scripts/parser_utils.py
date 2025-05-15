@@ -76,6 +76,7 @@ def type_to_descriptor(type_node):
     if type_node is None:
         return "V"  # void return type
     type_name = type_node.name
+    descriptor = ""
     if type_name in JAVA_TO_JVM_TYPE:
         descriptor += JAVA_TO_JVM_TYPE[type_name]
     else:
