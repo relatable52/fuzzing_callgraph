@@ -162,8 +162,10 @@ def extract_method_from_source(source_file: str, methods: set):
             print(matched_methods)
             print(method_name, class_name, package_name, params, return_type)
             assert (
-                len(matched_methods) == 1
+                len(matched_methods) <= 1
             ), f"Multiple matched methods found for {method_name} in {class_name}"
+            if len(matched_methods) == 0:
+                continue
             methods[matched_methods[0]] = method_text
         for method_node in class_node.constructors:
             method_name = "<init>"
@@ -179,8 +181,10 @@ def extract_method_from_source(source_file: str, methods: set):
             print(matched_methods)
             print(method_name, class_name, package_name, params, return_type)
             assert (
-                len(matched_methods) == 1
+                len(matched_methods) <= 1
             ), f"Multiple matched methods found for {method_name} in {class_name}"
+            if len(matched_methods) == 0:
+                continue
             methods[matched_methods[0]] = method_text
     return methods
 
@@ -206,7 +210,7 @@ def main():
     write_methods_to_file(filtered_methods, filtered_methods_output_path)
 
     source_files = glob(
-        CODE_DIR + f"/**/{pattern[:-7]}/**/*.java",
+        CODE_DIR + f"/**/src/main/java/{pattern[:-7]}/**/*.java",
         recursive=True,
     )
 
