@@ -1,9 +1,11 @@
-import csv
+import json
 import os
 import re
+import subprocess
 from argparse import ArgumentParser
 
-from config import OUTPUT_DIR
+import javalang
+from config import CODE_DIR, OUTPUT_DIR, RAW_CALLGRAPH
 
 
 def parse_args():
@@ -18,7 +20,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_methods(combined_csv_path: str, config_path: str) -> set:
+def get_instrument_pattern(config_path: str) -> str:
     with open(config_path) as config_file:
         config_lines = config_file.readlines()
 
@@ -32,23 +34,61 @@ def get_methods(combined_csv_path: str, config_path: str) -> set:
         instrument_classes_line.split("=", 1)[1].strip().strip("'\"")
     )
 
-    # Convert class path to regex
+    # Convert class path pattern to regex
     pattern = (
         instrument_classes_value.replace(".", "/")
         .replace("**", ".*")
         .replace("*", "[^/]*")
     )
+    return pattern
+
+
+def get_jar_path(program: str) -> str:
+    jar_dir = os.path.join(RAW_CALLGRAPH, program, "target")
+    config_path = os.path.join("../testing/projects", program, "jcg.conf")
+
+    with open(config_path) as config_file:
+        config = json.load(config_file)
+    cp_list = config.get("cp", [])
+    assert len(cp_list) > 0, f"Classpath is empty in {config_path}"
+
+    jar_file = cp_list[0]
+
+    jar_path = os.path.join(jar_dir, jar_file)
+
+    if not os.path.exists(jar_path):
+        raise FileNotFoundError(f"JAR path {jar_path} does not exist.")
+    return jar_path
+
+
+def get_methods_from_jar(jar_path: str):
+    # Run javaq and capture the output
+    result = subprocess.run(
+        ["../javaq", "--cp", jar_path, "list-methods"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
 
     matched_methods = set()
-    with open(combined_csv_path, newline="") as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            for column in ["method", "target"]:
-                value = row.get(column, "")
-                if re.search(pattern, value):
-                    matched_methods.add(value)
+    for line in result.stdout.strip().splitlines():
+        line = line.strip()
+        matched_methods.add(line)
 
     return matched_methods
+
+
+def filter_methods_by_pattern(methods: set, pattern: str) -> set:
+    filtered_methods = set()
+    regex = re.compile(pattern)
+
+    for method in methods:
+        # Extract the class name from the method signature
+        class_name = method.split(":")[0]
+        if regex.match(class_name):
+            filtered_methods.add(method)
+
+    return filtered_methods
 
 
 def write_methods_to_file(methods: set, output_path: str):
@@ -63,14 +103,19 @@ def main():
 
     output_dir = os.path.join(OUTPUT_DIR, program)
     os.makedirs(output_dir, exist_ok=True)
-    combined_csv_path = os.path.join(output_dir, "combined.csv")
+    jar_path = get_jar_path(program)
     config_path = os.path.join("../testing/projects", program, ".env")
     methods_output_path = os.path.join(output_dir, "methods.txt")
+    filtered_methods_output_path = os.path.join(output_dir, "filtered_methods.txt")
 
-    methods = get_methods(combined_csv_path, config_path)
+    methods = get_methods_from_jar(jar_path)
+    filtered_methods = filter_methods_by_pattern(
+        methods, get_instrument_pattern(config_path)
+    )
 
     print(f"Found {len(methods)} matched methods.")
     write_methods_to_file(methods, methods_output_path)
+    write_methods_to_file(filtered_methods, filtered_methods_output_path)
 
 
 if __name__ == "__main__":
