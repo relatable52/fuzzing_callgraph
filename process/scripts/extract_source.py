@@ -176,7 +176,7 @@ def extract_method_from_source(source_file: str, methods: set):
                 codelines, startpos, endpos, startline, endline, lex
             )
             params = get_method_parameters(method_node)
-            return_type = type_to_descriptor(method_node.return_type)
+            return_type = "V"
             matched_methods = get_matched_methods(
                 method_name, class_name, package_name, params, return_type, methods
             )
