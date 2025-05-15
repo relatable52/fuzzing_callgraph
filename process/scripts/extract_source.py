@@ -65,7 +65,7 @@ def get_jar_path(program: str) -> str:
 def get_methods_from_jar(jar_path: str):
     # Run javaq and capture the output
     result = subprocess.run(
-        ["../javaq", "--cp", jar_path, "list-methods"],
+        ["./javaq", "--cp", jar_path, "list-methods"],
         check=True,
         capture_output=True,
         text=True,
