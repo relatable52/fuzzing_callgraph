@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 import re
@@ -202,6 +203,18 @@ def main():
     source_files = glob(
         os.path.join(CODE_DIR, program, f"**/{pattern}/**", "*.java"), recursive=True
     )
+
+    methods = {}
+    for source_file in source_files:
+        methods.update(extract_method_from_source(source_file, filtered_methods))
+
+    source_code_output_path = os.path.join(output_dir, "source_code.csv")
+    with open(source_code_output_path, "w") as f:
+        writer = csv.writer(f)
+        writer.writerow(["method", "source_code"])
+        for method, code in methods.items():
+            writer.writerow([method, code])
+    print(f"Extracted source code for {len(filtered_methods)} methods.")
 
 
 if __name__ == "__main__":
