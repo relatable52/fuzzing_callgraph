@@ -204,7 +204,7 @@ def main():
         os.path.join(CODE_DIR, program, f"**/{pattern}/**", "*.java"), recursive=True
     )
 
-    print(source_files)
+    print(source_files, pattern)
 
     methods = {}
     for source_file in source_files:
