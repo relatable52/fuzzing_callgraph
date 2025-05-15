@@ -52,7 +52,7 @@ def get_jar_path(program: str) -> str:
     cp_list = config.get("cp", [])
     assert len(cp_list) > 0, f"Classpath is empty in {config_path}"
 
-    jar_file = cp_list[0]["path"]
+    jar_file = cp_list[0]["path"].strip()[1:]
 
     jar_path = os.path.join(jar_dir, jar_file)
     print(jar_dir, jar_path)
