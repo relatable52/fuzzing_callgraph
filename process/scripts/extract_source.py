@@ -201,10 +201,11 @@ def main():
     write_methods_to_file(filtered_methods, filtered_methods_output_path)
 
     source_files = glob(
-        os.path.join(CODE_DIR, program, f"**/{pattern}/**", "*.java"), recursive=True
+        os.path.join(CODE_DIR, program, f"**/{pattern[:-6]}/**", "*.java"),
+        recursive=True,
     )
 
-    print(source_files, pattern)
+    print(source_files, pattern[:-6])
 
     methods = {}
     for source_file in source_files:
