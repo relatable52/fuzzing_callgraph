@@ -53,6 +53,8 @@ def get_jar_path(program: str) -> str:
     assert len(cp_list) > 0, f"Classpath is empty in {config_path}"
 
     jar_file = cp_list[0]
+    print(config)
+    print(jar_file)
 
     jar_path = os.path.join(jar_dir, jar_file)
 
