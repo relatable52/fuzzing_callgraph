@@ -110,18 +110,18 @@ def get_matched_methods(
 ) -> list:
     matched_methods = []
     for method in methods:
-        method_parts = method.split(":")[0]
-        params = method.split(":")[1].split(")")[0][1:]
-        return_type = method.split(":")[1].split(")")[1]
+        method_part = method.split(":")[0]
+        params_part = method.split(":")[1].split(")")[0][1:]
+        return_part = method.split(":")[1].split(")")[1]
         check = True
-        if f"{class_name}.{method_name}" not in method_parts:
+        if f"{class_name}.{method_name}" not in method_part:
             check = False
-        if package_name and package_name not in method_parts:
+        if package_name and package_name not in method_part:
             check = False
         for param in params:
-            if param not in method_parts:
+            if param not in params_part:
                 check = False
-        if return_type not in method_parts:
+        if return_type not in return_part:
             check = False
         if check:
             matched_methods.append(method)
@@ -169,9 +169,11 @@ def extract_method_from_source(source_file: str, methods: set):
             methods[matched_methods[0]] = method_text
         for method_node in class_node.constructors:
             method_name = "<init>"
-            startpos, endpos, startline, endline = get_method_start_end(method_node)
+            startpos, endpos, startline, endline = get_method_start_end(
+                method_node, tree
+            )
             method_text, startline, endline, lex = get_method_text(
-                startpos, endpos, startline, endline, lex
+                codelines, startpos, endpos, startline, endline, lex
             )
             params = get_method_parameters(method_node)
             return_type = type_to_descriptor(method_node.return_type)
