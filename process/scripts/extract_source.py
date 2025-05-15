@@ -118,11 +118,11 @@ def get_matched_methods(
             check = False
         if package_name and package_name not in method_part:
             check = False
-        for param in params:
-            if param not in params_part:
-                check = False
-        if return_type not in return_part:
-            check = False
+        # for param in params:
+        #     if param not in params_part:
+        #         check = False
+        # if return_type not in return_part:
+        #     check = False
         if check:
             matched_methods.append(method)
     return matched_methods
