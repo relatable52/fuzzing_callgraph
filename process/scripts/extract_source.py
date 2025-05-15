@@ -204,6 +204,8 @@ def main():
         os.path.join(CODE_DIR, program, f"**/{pattern}/**", "*.java"), recursive=True
     )
 
+    print(source_files)
+
     methods = {}
     for source_file in source_files:
         methods.update(extract_method_from_source(source_file, filtered_methods))
