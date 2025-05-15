@@ -3,9 +3,11 @@ import os
 import re
 import subprocess
 from argparse import ArgumentParser
+from glob import glob
 
 import javalang
 from config import CODE_DIR, OUTPUT_DIR, RAW_CALLGRAPH
+from parser_utils import get_method_start_end, get_method_text, type_to_descriptor
 
 
 def parse_args():
@@ -98,6 +100,85 @@ def write_methods_to_file(methods: set, output_path: str):
             f.write(f"{method}\n")
 
 
+def get_matched_methods(
+    method_name: str,
+    class_name: str,
+    package_name: str,
+    params: list,
+    return_type: str,
+    methods: set,
+) -> list:
+    matched_methods = []
+    for method in methods:
+        method_parts = method.split(":")[0]
+        params = method.split(":")[1].split(")")[0][1:]
+        return_type = method.split(":")[1].split(")")[1]
+        check = True
+        if f"{class_name}.{method_name}" not in method_parts:
+            check = False
+        if package_name and package_name not in method_parts:
+            check = False
+        for param in params:
+            if param not in method_parts:
+                check = False
+        if return_type not in method_parts:
+            check = False
+        if check:
+            matched_methods.append(method)
+    return matched_methods
+
+
+def get_method_parameters(method_node):
+    params = []
+    for param in method_node.parameters:
+        params.append(type_to_descriptor(param.type))
+    return params
+
+
+def extract_method_from_source(source_file: str, methods: set):
+    with open(source_file) as f:
+        codelines = f.readlines()
+        code_text = "".join(codelines)
+
+    lex = None
+    tree = javalang.parse.parse(code_text)
+    package_name = tree.package.name if tree.package else ""
+    methods = {}
+    for path, class_node in tree.filter(javalang.tree.ClassDeclaration):
+        class_name = class_node.name
+        for method_node in class_node.methods:
+            method_name = method_node.name
+            startpos, endpos, startline, endline = get_method_start_end(method_node)
+            method_text, startline, endline, lex = get_method_text(
+                startpos, endpos, startline, endline, lex
+            )
+            params = get_method_parameters(method_node)
+            return_type = type_to_descriptor(method_node.return_type)
+            matched_methods = get_matched_methods(
+                method_name, class_name, package_name, params, return_type, methods
+            )
+            assert (
+                len(matched_methods) == 1
+            ), f"Multiple matched methods found for {method_name} in {class_name}"
+            methods[matched_methods[0]] = method_text
+        for method_node in class_node.constructors:
+            method_name = "<init>"
+            startpos, endpos, startline, endline = get_method_start_end(method_node)
+            method_text, startline, endline, lex = get_method_text(
+                startpos, endpos, startline, endline, lex
+            )
+            params = get_method_parameters(method_node)
+            return_type = type_to_descriptor(method_node.return_type)
+            matched_methods = get_matched_methods(
+                method_name, class_name, package_name, params, return_type, methods
+            )
+            assert (
+                len(matched_methods) == 1
+            ), f"Multiple matched methods found for {method_name} in {class_name}"
+            methods[matched_methods[0]] = method_text
+    return methods
+
+
 def main():
     args = parse_args()
     program = args.program
@@ -110,13 +191,17 @@ def main():
     filtered_methods_output_path = os.path.join(output_dir, "filtered_methods.txt")
 
     methods = get_methods_from_jar(jar_path)
-    filtered_methods = filter_methods_by_pattern(
-        methods, get_instrument_pattern(config_path)
-    )
+    pattern = get_instrument_pattern(config_path)
+    filtered_methods = filter_methods_by_pattern(methods, pattern)
 
     print(f"Found {len(methods)} matched methods.")
+    print(f"Found {len(filtered_methods)} filtered methods.")
     write_methods_to_file(methods, methods_output_path)
     write_methods_to_file(filtered_methods, filtered_methods_output_path)
+
+    source_files = glob(
+        os.path.join(CODE_DIR, program, f"**/{pattern}/**", "*.java"), recursive=True
+    )
 
 
 if __name__ == "__main__":
