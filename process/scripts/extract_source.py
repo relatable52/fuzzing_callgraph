@@ -149,9 +149,11 @@ def extract_method_from_source(source_file: str, methods: set):
         class_name = class_node.name
         for method_node in class_node.methods:
             method_name = method_node.name
-            startpos, endpos, startline, endline = get_method_start_end(method_node)
+            startpos, endpos, startline, endline = get_method_start_end(
+                tree, method_node
+            )
             method_text, startline, endline, lex = get_method_text(
-                startpos, endpos, startline, endline, lex
+                codelines, startpos, endpos, startline, endline, lex
             )
             params = get_method_parameters(method_node)
             return_type = type_to_descriptor(method_node.return_type)
