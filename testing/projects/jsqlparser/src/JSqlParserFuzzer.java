@@ -70,6 +70,6 @@ class JSqlParserFuzzer {
             } catch (ArrayIndexOutOfBoundsException | TokenMgrException e) {
                 // Needed to catch to enable fuzzer to continue
             }
-        } catch (Exception e) {}
+        } catch (Throwable t) {}
     }
 }
