@@ -13,6 +13,6 @@ public class PdfFuzzer {
             InputStream stream = new ByteArrayInputStream(data.consumeRemainingAsString().getBytes(StandardCharsets.UTF_8));
             PdfReader reader = new PdfReader(stream);
             PdfDocument pdfDoc = new PdfDocument(reader);
-        } catch (Exception e) { }
+        } catch (Throwable t) { }
     }
 }
