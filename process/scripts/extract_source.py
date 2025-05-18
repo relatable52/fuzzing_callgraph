@@ -153,6 +153,7 @@ def main():
     write_methods_to_file(
         missing_methods, os.path.join(output_dir, "missing_methods.txt")
     )
+    print(f"Missing methods: {len(missing_methods)}")
 
 
 if __name__ == "__main__":
