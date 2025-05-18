@@ -142,7 +142,7 @@ def main():
                 source_code[check_methods[method]] = code
 
     missing_methods = {
-        check_methods[m] for m in (set(check_methods.keys) - set(source_code.keys()))
+        check_methods[m] for m in (set(check_methods.keys()) - set(source_code.keys()))
     }
 
     write_source_code_to_file(source_code, os.path.join(output_dir, "code.csv"))
