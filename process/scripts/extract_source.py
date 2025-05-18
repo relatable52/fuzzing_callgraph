@@ -8,7 +8,7 @@ from glob import glob
 
 import javalang
 from config import CODE_DIR, OUTPUT_DIR, RAW_CALLGRAPH
-from parser_utils import get_method_start_end, get_method_text, type_to_descriptor
+from parser_utils import extract_source, shorten_jvm_descriptor
 
 
 def parse_args():
@@ -100,8 +100,11 @@ def write_methods_to_file(methods: set, output_path: str):
             f.write(f"{method}\n")
 
 
-def extract_method_from_source(source_file: str, methods: set):
-    pass
+def write_source_code_to_file(source_code: dict, output_path: str):
+    writer = csv.writer(open(output_path, "w", newline=""))
+    writer.writerow(["descriptor", "code"])
+    for method, code in source_code.items():
+        writer.writerow([method, code])
 
 
 def main():
@@ -127,6 +130,24 @@ def main():
     source_files = glob(
         CODE_DIR + f"/**/src/main/java/{pattern[:-7]}/**/*.java",
         recursive=True,
+    )
+
+    source_code = {}
+
+    check_methods = {shorten_jvm_descriptor(m): m for m in filtered_methods}
+    for source_file in source_files:
+        methods_in_file = extract_source(source_file)
+        for method, code in methods_in_file.items():
+            if method in check_methods:
+                source_code[check_methods[method]] = code
+
+    missing_methods = {
+        check_methods[m] for m in (set(check_methods.keys) - set(source_code.keys()))
+    }
+
+    write_source_code_to_file(source_code, os.path.join(output_dir, "code.csv"))
+    write_methods_to_file(
+        missing_methods, os.path.join(output_dir, "missing_methods.txt")
     )
 
 
