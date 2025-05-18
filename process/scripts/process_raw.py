@@ -160,6 +160,7 @@ def main():
     for static_alg in STATICCG:
         save_dir = static_alg.replace("/", "-").lower()
         output_path = os.path.join(OUTPUT_DIR, program, save_dir, f"raw.csv")
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["method", "target", "offset", dynamic_name, "static"])
