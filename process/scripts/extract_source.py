@@ -100,95 +100,8 @@ def write_methods_to_file(methods: set, output_path: str):
             f.write(f"{method}\n")
 
 
-def get_matched_methods(
-    method_name: str,
-    class_name: str,
-    package_name: str,
-    params: list,
-    return_type: str,
-    methods: set,
-) -> list:
-    matched_methods = []
-    for method in methods:
-        method_part = method.split(":")[0]
-        params_part = method.split(":")[1].split(")")[0][1:]
-        return_part = method.split(":")[1].split(")")[1]
-        check = True
-        if f"{class_name}.{method_name}" not in method_part:
-            check = False
-        if package_name and package_name not in method_part:
-            check = False
-        # for param in params:
-        #     if param not in params_part:
-        #         check = False
-        # if return_type not in return_part:
-        #     check = False
-        if check:
-            matched_methods.append(method)
-    return matched_methods
-
-
-def get_method_parameters(method_node):
-    params = []
-    for param in method_node.parameters:
-        params.append(type_to_descriptor(param.type))
-    return params
-
-
 def extract_method_from_source(source_file: str, methods: set):
-    with open(source_file) as f:
-        codelines = f.readlines()
-        code_text = "".join(codelines)
-
-    lex = None
-    tree = javalang.parse.parse(code_text)
-    package_name = tree.package.name if tree.package else ""
-    methods = {}
-    for path, class_node in tree.filter(javalang.tree.ClassDeclaration):
-        class_name = class_node.name
-        for method_node in class_node.methods:
-            method_name = method_node.name
-            startpos, endpos, startline, endline = get_method_start_end(
-                method_node, tree
-            )
-            method_text, startline, endline, lex = get_method_text(
-                codelines, startpos, endpos, startline, endline, lex
-            )
-            params = get_method_parameters(method_node)
-            return_type = type_to_descriptor(method_node.return_type)
-            matched_methods = get_matched_methods(
-                method_name, class_name, package_name, params, return_type, methods
-            )
-            print(matched_methods)
-            print(method_name, class_name, package_name, params, return_type)
-            assert (
-                len(matched_methods) <= 1
-            ), f"Multiple matched methods found for {method_name} in {class_name}"
-            if len(matched_methods) == 0:
-                continue
-            methods[matched_methods[0]] = method_text
-        for method_node in class_node.constructors:
-            method_name = "<init>"
-            startpos, endpos, startline, endline = get_method_start_end(
-                method_node, tree
-            )
-            method_text, startline, endline, lex = get_method_text(
-                codelines, startpos, endpos, startline, endline, lex
-            )
-            params = get_method_parameters(method_node)
-            return_type = "V"
-            matched_methods = get_matched_methods(
-                method_name, class_name, package_name, params, return_type, methods
-            )
-            print(matched_methods)
-            print(method_name, class_name, package_name, params, return_type)
-            assert (
-                len(matched_methods) <= 1
-            ), f"Multiple matched methods found for {method_name} in {class_name}"
-            if len(matched_methods) == 0:
-                continue
-            methods[matched_methods[0]] = method_text
-    return methods
+    pass
 
 
 def main():
@@ -215,20 +128,6 @@ def main():
         CODE_DIR + f"/**/src/main/java/{pattern[:-7]}/**/*.java",
         recursive=True,
     )
-
-    print(CODE_DIR + f"/**/{pattern[:-7]}/**/*.java")
-
-    methods = {}
-    for source_file in source_files:
-        methods.update(extract_method_from_source(source_file, filtered_methods))
-
-    source_code_output_path = os.path.join(output_dir, "source_code.csv")
-    with open(source_code_output_path, "w") as f:
-        writer = csv.writer(f)
-        writer.writerow(["method", "source_code"])
-        for method, code in methods.items():
-            writer.writerow([method, code])
-    print(f"Extracted source code for {len(filtered_methods)} methods.")
 
 
 if __name__ == "__main__":
