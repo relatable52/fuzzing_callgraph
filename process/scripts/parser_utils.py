@@ -137,7 +137,6 @@ def extract_source(target_file: str) -> set:
                 codelines, startpos, endpos, startline, endline, lex
             )
             signature = get_method_signature(method_node, package_name, class_name)
-            print(signature)
             methods[signature] = method_text
         for method_node in class_node.constructors:
             startpos, endpos, startline, endline = get_method_start_end(
@@ -147,7 +146,6 @@ def extract_source(target_file: str) -> set:
                 codelines, startpos, endpos, startline, endline, lex
             )
             signature = get_method_signature(method_node, package_name, class_name)
-            print(signature)
             methods[signature] = method_text
     return methods
 
