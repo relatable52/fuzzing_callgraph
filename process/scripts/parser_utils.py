@@ -137,7 +137,14 @@ def extract_source(target_file: str) -> set:
                 codelines, startpos, endpos, startline, endline, lex
             )
             signature = get_method_signature(method_node, package_name, class_name)
-            methods[signature] = method_text
+            methods[signature] = {
+                "code": method_text,
+                "docs": (
+                    method_node.documentation
+                    if hasattr(method_node, "documentation")
+                    else ""
+                ),
+            }
         for method_node in class_node.constructors:
             startpos, endpos, startline, endline = get_method_start_end(
                 tree, method_node
@@ -146,7 +153,14 @@ def extract_source(target_file: str) -> set:
                 codelines, startpos, endpos, startline, endline, lex
             )
             signature = get_method_signature(method_node, package_name, class_name)
-            methods[signature] = method_text
+            methods[signature] = {
+                "code": method_text,
+                "docs": (
+                    method_node.documentation
+                    if hasattr(method_node, "documentation")
+                    else ""
+                ),
+            }
     return methods
 
 

@@ -101,10 +101,14 @@ def write_methods_to_file(methods: set, output_path: str):
 
 
 def write_source_code_to_file(source_code: dict, output_path: str):
-    writer = csv.writer(open(output_path, "w", newline=""))
-    writer.writerow(["descriptor", "code"])
-    for method, code in source_code.items():
-        writer.writerow([method, code])
+    with open(output_path, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+        writer.writerow(["descriptor", "docs", "code"])  # Header row
+
+        for method, data in source_code.items():
+            code = data.get("code", "")
+            docs = data.get("docs", "") or ""  # Handle None
+            writer.writerow([method, docs, code])
 
 
 def main():

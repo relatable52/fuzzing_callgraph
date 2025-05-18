@@ -117,9 +117,6 @@ def process_cg(json_path: str, output_path: str):
     return rows
 
 
-from collections import defaultdict
-
-
 def main():
     args = parse_args()
     program = args.program
