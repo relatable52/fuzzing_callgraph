@@ -130,19 +130,62 @@ def extract_source(target_file: str) -> set:
     for path, class_node in tree.filter(javalang.tree.TypeDeclaration):
         class_name = class_node.name
         for method_node in class_node.methods:
-            startpos, endpos, startline, endline = get_method_start_end(method_node)
+            startpos, endpos, startline, endline = get_method_start_end(
+                tree, method_node
+            )
             method_text, startline, endline, lex = get_method_text(
-                startpos, endpos, startline, endline, lex
+                codelines, startpos, endpos, startline, endline, lex
             )
             signature = get_method_signature(method_node, package_name, class_name)
             print(signature)
             methods[signature] = method_text
         for method_node in class_node.constructors:
-            startpos, endpos, startline, endline = get_method_start_end(method_node)
+            startpos, endpos, startline, endline = get_method_start_end(
+                tree, method_node
+            )
             method_text, startline, endline, lex = get_method_text(
-                startpos, endpos, startline, endline, lex
+                codelines, startpos, endpos, startline, endline, lex
             )
             signature = get_method_signature(method_node, package_name, class_name)
             print(signature)
             methods[signature] = method_text
     return methods
+
+
+def shorten_jvm_descriptor(descriptor: str) -> str:
+    method_path, method_desc = descriptor.split(":")
+    if "$" in method_path:
+        method_path = (
+            "/".join(method_path.split("$")[0].split("/")[:-1])
+            + "/"
+            + method_path.split("$")[-1]
+        )
+    params_raw, return_type = re.match(r"\((.*?)\)(.*)", method_desc).groups()
+
+    # Match array or object types correctly
+    token_pattern = re.compile(r"\[*L[^;]+;|\[*[BCDFIJSZ]")
+
+    def shorten_type(t):
+        type_name = ""
+        if t.startswith("L"):  # Object type
+            type_name = t.split("/")[-1]
+        elif t.startswith("[L"):  # Array of objects
+            parts = t.split("/")
+            class_name = parts[-1]
+            dims = t.count("[")
+            type_name = "[" * dims + class_name
+        else:  # Primitive or array of primitive
+            type_name = t
+        return type_name.split("$")[-1]
+
+    param_tokens = token_pattern.findall(params_raw)
+    simplified_params = [shorten_type(t) for t in param_tokens]
+
+    # Ensure object types end with ';'
+    def finalize(t):
+        return t + ";" if t.startswith("L") and not t.endswith(";") else t
+
+    finalized_params = [finalize(t) for t in simplified_params]
+
+    new_params = "(" + "".join(finalized_params) + ")" + shorten_type(return_type)
+    return f"{method_path}:{new_params}"
