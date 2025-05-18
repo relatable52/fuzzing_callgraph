@@ -104,15 +104,10 @@ def convert_cg_to_rows(data: dict):
     return rows
 
 
-def process_cg(json_path: str, output_path: str):
+def process_cg(json_path: str):
     data = read_json(json_path)
 
     rows = convert_cg_to_rows(data)
-
-    with open(output_path, "w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(["method", "offset", "target", "pc"])
-        writer.writerows(rows)
 
     return rows
 
@@ -123,7 +118,6 @@ def main():
     print(program)
 
     cg_paths = get_cg_paths(program)
-    print(cg_paths)
     if not cg_paths:
         logging.error(f"No call graph paths found for program: {program}")
         return
@@ -133,13 +127,9 @@ def main():
     )  # key: (method, offset, target), value: dict of sources
 
     for name, path in cg_paths.items():
-        output_name = name.lower().replace("/", "_") + ".csv"
-        output_path = os.path.join(OUTPUT_DIR, program, output_name)
-        logging.info(f"Processing {name} from {path} to {output_path}")
         print(name)
-
         try:
-            rows = process_cg(path, output_path)
+            rows = process_cg(path)
 
             for row in rows:
                 method, offset, target, pc = row
@@ -162,6 +152,23 @@ def main():
             row = [method, offset, target]
             row += [sources.get(src, 0) for src in all_sources]
             writer.writerow(row)
+
+    # Step: Create separate CSV for each static analysis
+    dynamic_sources = ["Dynamic/fuzzing", "Dynamic/fuzzingseed"]
+    dynamic_name = "dynamic"
+    for static_alg in STATICCG:
+        save_dir = static_alg.replace("/", "-").lower()
+        output_path = os.path.join(OUTPUT_DIR, program, save_dir, f"raw.csv")
+        with open(output_path, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["method", "target", "offset", dynamic_name, "static"])
+
+            for (method, offset, target), sources in combined_dict.items():
+                dyn_val = any(sources.get(src, 0) for src in dynamic_sources)
+                static_val = sources.get(static_alg, 0)
+
+                if dyn_val or static_val:  # keep only if either is present
+                    writer.writerow([method, target, offset, int(dyn_val), static_val])
 
 
 if __name__ == "__main__":
