@@ -109,7 +109,7 @@ def compute_reachable_application_nodes(
         # Intersect with application methods
         reachable_apps = reachable_nodes & app_methods_set
 
-        std_lib_nodes[node_name].reachable_app_nodes = reachable_apps
+        std_lib_nodes[node_name].reachable_app_nodes.update(reachable_apps)
 
     print("Done computing reachable application nodes")
     return std_lib_nodes
