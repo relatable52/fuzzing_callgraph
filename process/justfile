@@ -21,3 +21,6 @@ run PROGRAM:
     just process_raw {{PROGRAM}}
     just extract_source {{PROGRAM}}
     just process_graph {{PROGRAM}}
+
+run_all: clone
+    python scripts/process_all.py &> {{OUTPUT_DIR}}/process_all.log
