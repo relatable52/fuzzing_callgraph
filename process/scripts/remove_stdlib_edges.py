@@ -11,6 +11,8 @@ import sys
 from collections import defaultdict, namedtuple
 from pathlib import Path
 
+from tqdm import tqdm
+
 ROOT_METHOD = "<boot>"
 
 # Edge and Node classes to model the graph
@@ -62,8 +64,10 @@ def empty_node():
 
 def remove_stdlib_nodes(nodes, stdlibnodes):
     """remove standard library nodes"""
+    print("Removing stdlib nodes ...")
     for node in stdlibnodes:
         del nodes[node]
+    print("Done removing stdlib nodes")
     return nodes
 
 
@@ -91,7 +95,8 @@ def compute_reachable_application_nodes(
 
     # Compute reachability information for all stdlib nodes
     # called directly called from the application
-    for node_name in std_lib_nodes_called_directly_from_application:
+    print("Computing reachable application nodes ...")
+    for node_name in (loop := tqdm(std_lib_nodes_called_directly_from_application)):
         # BFS
         nodes_to_be_explored = queue.Queue()
         visited_list = set()
@@ -110,6 +115,8 @@ def compute_reachable_application_nodes(
         for node in visited_list:
             if node in application_method_list:
                 std_lib_nodes[node_name].reachable_app_nodes.add(node)
+
+    print("Done computing reachable application nodes")
     return std_lib_nodes
 
 
@@ -129,7 +136,8 @@ def replace_std_lib_edges_with_app_edges(
 ):
     """Replaces edges ending in stdLib nodes with their reachable application
     nodes Assumes that wala nodes does not include stdLib nodes"""
-    for node_object in static_analysis_nodes.values():
+    print("Replacing stdlib edges with application edges ...")
+    for node_object in (loop := tqdm(static_analysis_nodes.values())):
         # Compute the standard libaray edges to remove, and the new application
         # nodes to replace them with
         new_edges_to_be_added = []
@@ -149,6 +157,7 @@ def replace_std_lib_edges_with_app_edges(
 
         # Replace the standard library edges with ones to application nodes
         node_object.edges.extend(new_edges_to_be_added)
+    print("Done replacing stdlib edges with application edges")
 
 
 def remove_stdlib_edges(analysisfile, methodsfile, do_transitive_closure):
