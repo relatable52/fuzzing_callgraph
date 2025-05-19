@@ -8,6 +8,8 @@ from glob import glob
 from config import OUTPUT_DIR, RAW_CALLGRAPH, STATICCG
 from utils import read_json
 
+ROOT_METHOD = "<boot>"
+
 
 def parse_args():
     parser = ArgumentParser(description="Process raw call graph data")
@@ -94,6 +96,7 @@ def format_method(method: dict) -> str:
 
 def convert_cg_to_rows(data: dict):
     rows = []
+
     for m in data["reachableMethods"]:
         caller = format_method(m["method"])
         for cs in m.get("callSites", []):
@@ -102,6 +105,17 @@ def convert_cg_to_rows(data: dict):
             for tgt in cs.get("targets", []):
                 callee = format_method(tgt)
                 rows.append([caller, line, callee, pc])
+
+    # Inject <boot> → methods that are never called (no incoming edges)
+    callers = {row[0] for row in rows}
+    callees = {row[2] for row in rows}
+
+    # These methods are in caller position but never in callee position → roots
+    root_methods = callers - callees
+
+    for method in sorted(root_methods):
+        rows.append(["<boot>", -1, method, -1])
+
     return rows
 
 
