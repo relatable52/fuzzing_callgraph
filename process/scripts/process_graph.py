@@ -28,7 +28,7 @@ def get_raw_paths(program: str) -> dict:
     print(f"Processing raw data for program: {program}")
 
     cg_paths = {}
-    for alg in ["OPAL/0-CFA", "OPAL/RTA", "WALA/0-CFA", "WALA/RTA"]:
+    for alg in ["OPAL/0-CFA", "OPAL/RTA", "WALA/0-CFA"]:
         alg_name = alg.replace("/", "-").lower()
         raw_cg_path = os.path.join(program_dir, alg_name, "raw.csv")
         if os.path.exists(raw_cg_path):
@@ -55,6 +55,7 @@ def main():
     for alg_name, cg_path in cg_paths.items():
         edges_removed_file = os.path.join(output_dir, alg_name, "edges_removed.csv")
         extra_info_file = os.path.join(output_dir, alg_name, "callgraph.csv")
+        print(f"Processing {alg_name} for {program}...")
 
         os.system(
             f"python3 scripts/remove_stdlib_edges.py {cg_path} {methods_file} {edges_removed_file}"
