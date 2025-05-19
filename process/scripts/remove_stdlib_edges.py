@@ -40,6 +40,7 @@ def main():
     # Write output
     printed = set()
     with open(outputfile, "w") as filep:
+        print("Writing output ...")
         writer = csv.writer(filep)
         writer.writerow(["method", "offset", "target", "original", "direct"])
         for name, obj in nodes_with_closure.items():
