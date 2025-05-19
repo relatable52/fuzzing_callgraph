@@ -4,11 +4,8 @@ and adds those application edges which are in the transitive of the removed edge
 """
 
 import csv
-import json
-import os
-import queue
 import sys
-from collections import defaultdict, namedtuple
+from collections import defaultdict, deque, namedtuple
 from pathlib import Path
 
 from tqdm import tqdm
@@ -86,35 +83,45 @@ def get_std_lib_nodes_directly_called(static_analysis_nodes, std_lib_nodes):
 def compute_reachable_application_nodes(
     std_lib_nodes, application_method_list, static_analysis_nodes
 ):
-    """compute the set of reachable application nodes for all the std_lib_nodes
-    , by computing its transitive closure transitive closure for each nodes is
-    stored in the 'reachable_app_nodes' field"""
+    """Compute the set of reachable application nodes for all the std_lib_nodes
+    by computing its transitive closure. The transitive closure for each node is
+    stored in the 'reachable_app_nodes' field."""
     std_lib_nodes_called_directly_from_application = get_std_lib_nodes_directly_called(
         static_analysis_nodes, std_lib_nodes
     )
 
-    # Compute reachability information for all stdlib nodes
-    # called directly called from the application
-    print("Computing reachable application nodes ...")
-    for node_name in (loop := tqdm(std_lib_nodes_called_directly_from_application)):
-        # BFS
-        nodes_to_be_explored = queue.Queue()
-        visited_list = set()
-        visited_list.add(node_name)
-        nodes_to_be_explored.put(node_name)
-        # BFS on 'node_name' to compute reachable nodes
-        while not nodes_to_be_explored.empty():
-            node = nodes_to_be_explored.get()
-            if node in std_lib_nodes:
-                for edge in std_lib_nodes[node].edges:
-                    if edge.dest not in visited_list:
-                        visited_list.add(edge.dest)
-                        nodes_to_be_explored.put(edge.dest)
+    # Cache to store reachable application nodes for each node
+    reachable_cache = {}
 
-        # Now compute which are the application nodes from this explored list
-        for node in visited_list:
-            if node in application_method_list:
-                std_lib_nodes[node_name].reachable_app_nodes.add(node)
+    # Compute reachability information for all stdlib nodes
+    # called directly from the application
+    print("Computing reachable application nodes ...")
+    for node_name in tqdm(std_lib_nodes_called_directly_from_application):
+        if node_name in reachable_cache:
+            std_lib_nodes[node_name].reachable_app_nodes = reachable_cache[node_name]
+            continue
+
+        # BFS
+        nodes_to_be_explored = deque()
+        visited_set = set()
+        reachable_apps = set()
+
+        visited_set.add(node_name)
+        nodes_to_be_explored.append(node_name)
+
+        while nodes_to_be_explored:
+            current_node = nodes_to_be_explored.popleft()
+            if current_node in std_lib_nodes:
+                for edge in std_lib_nodes[current_node].edges:
+                    dest = edge.dest
+                    if dest not in visited_set:
+                        visited_set.add(dest)
+                        nodes_to_be_explored.append(dest)
+            if current_node in application_method_list:
+                reachable_apps.add(current_node)
+
+        std_lib_nodes[node_name].reachable_app_nodes = reachable_apps
+        reachable_cache[node_name] = reachable_apps
 
     print("Done computing reachable application nodes")
     return std_lib_nodes
