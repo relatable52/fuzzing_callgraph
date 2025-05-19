@@ -37,13 +37,13 @@ def get_cg_paths(program: str) -> dict:
     output_dir = os.path.join(OUTPUT_DIR, program)
     os.makedirs(output_dir, exist_ok=True)
 
-    print(program_dir + "/**/fuzzing/**/cg.json")
+    # print(program_dir + "/**/fuzzing/**/cg.json")
     fuzzing_dyncg = glob(program_dir + "/**/fuzzing/**/cg.json", recursive=True)[0]
-    print(fuzzing_dyncg)
+    # print(fuzzing_dyncg)
     fuzzing_seed_dyncg = glob(
         program_dir + "/**/fuzzing_seed/**/cg.json", recursive=True
     )[0]
-    print(fuzzing_seed_dyncg)
+    # print(fuzzing_seed_dyncg)
     static_cg = [
         glob(
             program_dir + f"/**/staticcg/**/{alg}/cg.json",
@@ -51,7 +51,7 @@ def get_cg_paths(program: str) -> dict:
         )[0]
         for alg in STATICCG
     ]
-    print(static_cg)
+    # print(static_cg)
 
     cg_paths = {
         "Dynamic/fuzzing": fuzzing_dyncg,
@@ -60,7 +60,7 @@ def get_cg_paths(program: str) -> dict:
     for alg, path in zip(STATICCG, static_cg):
         cg_paths[alg] = path
 
-    print(cg_paths)
+    # print(cg_paths)
 
     return cg_paths
 
@@ -128,7 +128,7 @@ def main():
     )  # key: (method, offset, target), value: dict of sources
 
     for name, path in cg_paths.items():
-        print(name)
+        # print(name)
         try:
             rows = process_cg(path)
 
