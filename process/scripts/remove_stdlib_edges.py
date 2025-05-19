@@ -5,9 +5,10 @@ and adds those application edges which are in the transitive of the removed edge
 
 import csv
 import sys
-from collections import defaultdict, deque, namedtuple
+from collections import defaultdict, namedtuple
 from pathlib import Path
 
+import networkx as nx
 from tqdm import tqdm
 
 ROOT_METHOD = "<boot>"
@@ -80,48 +81,35 @@ def get_std_lib_nodes_directly_called(static_analysis_nodes, std_lib_nodes):
     return directly_called_nodes
 
 
-def compute_reachable_application_nodes(
+def build_networkx_graph(std_lib_nodes):
+    G = nx.DiGraph()
+    for node_name, node in std_lib_nodes.items():
+        for edge in node.edges:
+            G.add_edge(node_name, edge.dest)
+    return G
+
+
+def compute_reachable_application_nodes_fast(
     std_lib_nodes, application_method_list, static_analysis_nodes
 ):
-    """Compute the set of reachable application nodes for all the std_lib_nodes
-    by computing its transitive closure. The transitive closure for each node is
-    stored in the 'reachable_app_nodes' field."""
     std_lib_nodes_called_directly_from_application = get_std_lib_nodes_directly_called(
         static_analysis_nodes, std_lib_nodes
     )
 
-    # Cache to store reachable application nodes for each node
-    reachable_cache = {}
+    print("Building graph ...")
+    G = build_networkx_graph(std_lib_nodes)
 
-    # Compute reachability information for all stdlib nodes
-    # called directly from the application
-    print("Computing reachable application nodes ...")
+    app_methods_set = set(application_method_list)
+
+    print("Computing reachable application nodes (fast version) ...")
     for node_name in tqdm(std_lib_nodes_called_directly_from_application):
-        if node_name in reachable_cache:
-            std_lib_nodes[node_name].reachable_app_nodes = reachable_cache[node_name]
-            continue
+        # Get reachable nodes from node_name using built-in fast DFS
+        reachable_nodes = nx.descendants(G, node_name)
 
-        # BFS
-        nodes_to_be_explored = deque()
-        visited_set = set()
-        reachable_apps = set()
-
-        visited_set.add(node_name)
-        nodes_to_be_explored.append(node_name)
-
-        while nodes_to_be_explored:
-            current_node = nodes_to_be_explored.popleft()
-            if current_node in std_lib_nodes:
-                for edge in std_lib_nodes[current_node].edges:
-                    dest = edge.dest
-                    if dest not in visited_set:
-                        visited_set.add(dest)
-                        nodes_to_be_explored.append(dest)
-            if current_node in application_method_list:
-                reachable_apps.add(current_node)
+        # Intersect with application methods
+        reachable_apps = reachable_nodes & app_methods_set
 
         std_lib_nodes[node_name].reachable_app_nodes = reachable_apps
-        reachable_cache[node_name] = reachable_apps
 
     print("Done computing reachable application nodes")
     return std_lib_nodes
