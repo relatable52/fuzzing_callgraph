@@ -42,7 +42,7 @@ def main():
     with open(outputfile, "w") as filep:
         print("Writing output ...")
         writer = csv.writer(filep)
-        writer.writerow(["method", "offset", "target", "original", "direct"])
+        writer.writerow(["method", "offset", "target", "trans", "direct"])
         for name, obj in nodes_with_closure.items():
             for edge in obj.edges:
                 edge_id = (name, edge.bytecodeOffset, edge.dest)

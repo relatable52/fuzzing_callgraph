@@ -24,7 +24,6 @@ PROGRAMS = (
     "dom4j",
     "zt-zip",
     "apache-commons-csv",
-    "jsqlparser",
     "apache-commons-imaging",
     "itext7",
 )

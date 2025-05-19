@@ -3,6 +3,10 @@ set shell := ["bash", "-cu"]
 
 OUTPUT_DIR := env("OUTPUT_DIR", "output")
 CALLGRAPH := env("CALLGRAPH", "callgraph")
+CODE_DIR := env("CODE_DIR", "code")
+
+clone:
+    bash scripts/clone.sh {{CODE_DIR}}
 
 process_raw PROGRAM:
     python scripts/process_raw.py --program {{PROGRAM}}
