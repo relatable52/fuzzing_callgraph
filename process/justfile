@@ -5,7 +5,15 @@ OUTPUT_DIR := env("OUTPUT_DIR", "output")
 CALLGRAPH := env("CALLGRAPH", "callgraph")
 
 process_raw PROGRAM:
-    python scripts/process_raw.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/process_raw_{{PROGRAM}}.log"
+    python scripts/process_raw.py --program {{PROGRAM}}
 
 extract_source PROGRAM:
-    python scripts/extract_source.py --program {{PROGRAM}} 2>&1 | tee "{{OUTPUT_DIR}}/extract_source_{{PROGRAM}}.log"
+    python scripts/extract_source.py --program {{PROGRAM}}
+
+process_graph PROGRAM:
+    python scripts/process_graph.py --program {{PROGRAM}}
+
+run PROGRAM:
+    just process_raw {{PROGRAM}}
+    just extract_source {{PROGRAM}}
+    just process_graph {{PROGRAM}}

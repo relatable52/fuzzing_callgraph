@@ -44,6 +44,7 @@ def main():
     program = args.program
 
     cg_paths = get_raw_paths(program)
+    print(cg_paths)
     if not cg_paths:
         print(f"No raw call graphs found for {program}.")
         return
