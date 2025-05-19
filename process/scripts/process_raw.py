@@ -170,21 +170,31 @@ def main():
 
     # Step: Create separate CSV for each static analysis
     dynamic_sources = ["Dynamic/fuzzing", "Dynamic/fuzzingseed"]
-    dynamic_name = "dynamic"
     for static_alg in STATICCG:
         save_dir = static_alg.replace("/", "-").lower()
-        output_path = os.path.join(OUTPUT_DIR, program, save_dir, f"raw.csv")
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        with open(output_path, "w", newline="") as f:
+        static_path = os.path.join(OUTPUT_DIR, program, save_dir, f"static.csv")
+        dynamic_path = os.path.join(OUTPUT_DIR, program, save_dir, f"dynamic.csv")
+        os.makedirs(os.path.dirname(static_path), exist_ok=True)
+        os.makedirs(os.path.dirname(dynamic_path), exist_ok=True)
+        with open(static_path, "w", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(["method", "target", "offset", dynamic_name, "static"])
+            writer.writerow(["method", "target", "offset", "static"])
+
+            for (method, offset, target), sources in combined_dict.items():
+                static_val = sources.get(static_alg, 0)
+
+                if static_val:
+                    writer.writerow([method, target, offset, static_val])
+
+        with open(dynamic_path, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["method", "target", "offset", "dynamic"])
 
             for (method, offset, target), sources in combined_dict.items():
                 dyn_val = any(sources.get(src, 0) for src in dynamic_sources)
-                static_val = sources.get(static_alg, 0)
 
-                if dyn_val or static_val:  # keep only if either is present
-                    writer.writerow([method, target, offset, int(dyn_val), static_val])
+                if dyn_val:
+                    writer.writerow([method, target, offset, dyn_val])
 
 
 if __name__ == "__main__":

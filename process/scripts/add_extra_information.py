@@ -19,7 +19,7 @@ OUTPUT_FILE = sys.argv[2]
 # Some fixed constants
 UNREACHABLE = -1
 LARGE_GRAPH_CUTOFF = 30000
-DYNAMIC_ANALYSIS_NAME = "wiretap"
+DYNAMIC_ANALYSIS_NAME = "dynamic"
 
 # Deafult constants
 EDGE_DEPTH_DEFAULT = "1000000000"
