@@ -52,15 +52,15 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     methods_file = os.path.join(output_dir, "filtered_methods.txt")
     edges_removed_file = os.path.join(output_dir, "edges_removed.csv")
-    extra_info_file = os.path.join(output_dir, "extra_info.csv")
+    extra_info_file = os.path.join(output_dir, "callgraph.csv")
 
     for cg_path in cg_paths:
         os.system(
             f"python3 scripts/remove_stdlib_edges.py {cg_path} {methods_file} {edges_removed_file}"
         )
-        os.system(
-            f"python3 scripts/add_extra_information.py {edges_removed_file} {extra_info_file}"
-        )
+        # os.system(
+        #     f"python3 scripts/add_extra_information.py {edges_removed_file} {extra_info_file}"
+        # )
 
 
 if __name__ == "__main__":
