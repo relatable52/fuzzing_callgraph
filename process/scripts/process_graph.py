@@ -1,7 +1,7 @@
 import os
 from argparse import ArgumentParser
 
-from config import OUTPUT_DIR
+from config import OUTPUT_DIR, STATICCG
 
 
 def parse_args():
@@ -28,7 +28,7 @@ def get_raw_paths(program: str) -> dict:
     print(f"Processing raw data for program: {program}")
 
     cg_paths = []
-    for alg in ["OPAL/0-CFA"]:
+    for alg in STATICCG:
         alg_name = alg.replace("/", "-").lower()
         raw_cg_path = os.path.join(program_dir, alg_name, "raw.csv")
         if os.path.exists(raw_cg_path):
@@ -51,10 +51,11 @@ def main():
     output_dir = os.path.join(OUTPUT_DIR, program)
     os.makedirs(output_dir, exist_ok=True)
     methods_file = os.path.join(output_dir, "filtered_methods.txt")
-    edges_removed_file = os.path.join(output_dir, "edges_removed.csv")
-    extra_info_file = os.path.join(output_dir, "callgraph.csv")
 
     for cg_path in cg_paths:
+        edges_removed_file = os.path.join(output_dir, cg_path, "edges_removed.csv")
+        extra_info_file = os.path.join(output_dir, cg_path, "callgraph.csv")
+
         os.system(
             f"python3 scripts/remove_stdlib_edges.py {cg_path} {methods_file} {edges_removed_file}"
         )
