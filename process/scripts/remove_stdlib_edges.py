@@ -89,7 +89,7 @@ def build_networkx_graph(std_lib_nodes):
     return G
 
 
-def compute_reachable_application_nodes_fast(
+def compute_reachable_application_nodes(
     std_lib_nodes, application_method_list, static_analysis_nodes
 ):
     std_lib_nodes_called_directly_from_application = get_std_lib_nodes_directly_called(
