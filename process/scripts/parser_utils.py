@@ -124,43 +124,48 @@ def extract_source(target_file: str) -> set:
         code_text = "".join(codelines)
 
     lex = None
-    tree = javalang.parse.parse(code_text)
-    package_name = tree.package.name if tree.package else ""
-    methods = {}
-    for path, class_node in tree.filter(javalang.tree.TypeDeclaration):
-        class_name = class_node.name
-        for method_node in class_node.methods:
-            startpos, endpos, startline, endline = get_method_start_end(
-                tree, method_node
-            )
-            method_text, startline, endline, lex = get_method_text(
-                codelines, startpos, endpos, startline, endline, lex
-            )
-            signature = get_method_signature(method_node, package_name, class_name)
-            methods[signature] = {
-                "code": method_text,
-                "docs": (
-                    method_node.documentation
-                    if hasattr(method_node, "documentation")
-                    else ""
-                ),
-            }
-        for method_node in class_node.constructors:
-            startpos, endpos, startline, endline = get_method_start_end(
-                tree, method_node
-            )
-            method_text, startline, endline, lex = get_method_text(
-                codelines, startpos, endpos, startline, endline, lex
-            )
-            signature = get_method_signature(method_node, package_name, class_name)
-            methods[signature] = {
-                "code": method_text,
-                "docs": (
-                    method_node.documentation
-                    if hasattr(method_node, "documentation")
-                    else ""
-                ),
-            }
+    try:
+        tree = javalang.parse.parse(code_text)
+        package_name = tree.package.name if tree.package else ""
+        methods = {}
+
+        for path, class_node in tree.filter(javalang.tree.TypeDeclaration):
+            class_name = class_node.name
+            for method_node in class_node.methods:
+                startpos, endpos, startline, endline = get_method_start_end(
+                    tree, method_node
+                )
+                method_text, startline, endline, lex = get_method_text(
+                    codelines, startpos, endpos, startline, endline, lex
+                )
+                signature = get_method_signature(method_node, package_name, class_name)
+                methods[signature] = {
+                    "code": method_text,
+                    "docs": (
+                        method_node.documentation
+                        if hasattr(method_node, "documentation")
+                        else ""
+                    ),
+                }
+            for method_node in class_node.constructors:
+                startpos, endpos, startline, endline = get_method_start_end(
+                    tree, method_node
+                )
+                method_text, startline, endline, lex = get_method_text(
+                    codelines, startpos, endpos, startline, endline, lex
+                )
+                signature = get_method_signature(method_node, package_name, class_name)
+                methods[signature] = {
+                    "code": method_text,
+                    "docs": (
+                        method_node.documentation
+                        if hasattr(method_node, "documentation")
+                        else ""
+                    ),
+                }
+    except:
+        print(f"Error parsing {target_file}. Skipping.")
+        return {}
     return methods
 
 

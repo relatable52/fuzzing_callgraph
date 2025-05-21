@@ -132,7 +132,7 @@ def main():
     write_methods_to_file(filtered_methods, filtered_methods_output_path)
 
     source_files = glob(
-        CODE_DIR + f"/**/src/main/java/{pattern[:-7]}/**/*.java",
+        CODE_DIR + f"/**/{pattern[:-7]}/**/*.java",
         recursive=True,
     )
 
