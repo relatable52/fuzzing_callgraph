@@ -28,6 +28,7 @@ def main():
     args = parse_args()
     jar_path = args.jar_path
     pattern = args.pattern
+    output_file = args.output_file
 
     # Extract methods from the JAR file
     methods = get_methods_from_jar(jar_path)
@@ -36,8 +37,7 @@ def main():
     filtered_methods = filter_methods_by_pattern(methods, pattern)
 
     # Write the filtered methods to a file
-    output_file = "filtered_methods.txt"
-    print(filtered_methods)
+    # print(filtered_methods)
     write_methods_to_file(filtered_methods, output_file)
 
 
