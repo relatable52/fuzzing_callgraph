@@ -38,3 +38,7 @@ def main():
     # Write the filtered methods to a file
     output_file = "filtered_methods.txt"
     write_methods_to_file(filtered_methods, output_file)
+
+
+if __name__ == "__main__":
+    main()
