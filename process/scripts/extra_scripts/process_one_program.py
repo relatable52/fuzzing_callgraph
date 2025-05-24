@@ -130,9 +130,12 @@ def process_cg(json_path: str):
 def main():
     args = parse_args()
     program = args.program
+    output_dir = args.output_dir
+    dynamic_cg_path = args.dyncg_path
+    static_cg_dir = args.staticcg_dir
     print(program)
 
-    cg_paths = get_cg_paths(program)
+    cg_paths = get_cg_paths(dynamic_cg_path, static_cg_dir)
     if not cg_paths:
         logging.error(f"No call graph paths found for program: {program}")
         return
@@ -172,8 +175,8 @@ def main():
     dynamic_sources = ["Dynamic"]
     for static_alg in STATICCG:
         save_dir = static_alg.replace("/", "-").lower()
-        static_path = os.path.join(OUTPUT_DIR, program, save_dir, f"static.csv")
-        dynamic_path = os.path.join(OUTPUT_DIR, program, save_dir, f"dynamic.csv")
+        static_path = os.path.join(output_dir, program, save_dir, f"static.csv")
+        dynamic_path = os.path.join(output_dir, program, save_dir, f"dynamic.csv")
         os.makedirs(os.path.dirname(static_path), exist_ok=True)
         os.makedirs(os.path.dirname(dynamic_path), exist_ok=True)
         with open(static_path, "w", newline="") as f:
