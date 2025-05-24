@@ -404,7 +404,7 @@ def compute_graph_level_info(graph):
     for node_name, node_object in graph.nodes.items():
         total_nodes += 1.0
         total_deg += len(node_object.edges)
-    graph.avg_deg = total_deg / total_nodes
+    graph.avg_deg = total_deg / total_nodes if total_nodes > 0 else 0
 
     # Compute average edge fanout
     total_fanout = 0
