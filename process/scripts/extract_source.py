@@ -101,7 +101,9 @@ def write_methods_to_file(methods: set, output_path: str):
 
 
 def write_source_code_to_file(source_code: dict, output_path: str):
-    with open(output_path, "w", newline="", encoding="utf-8") as csvfile:
+    with open(
+        output_path, "w", newline="", encoding="utf-8", errors="replace"
+    ) as csvfile:
         writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
         writer.writerow(["descriptor", "docs", "code"])  # Header row
 
