@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from config import PROGRAMS
+from scripts.config import PROGRAMS
 
 
 def run_one(program: str, script: str):

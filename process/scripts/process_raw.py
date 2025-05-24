@@ -5,8 +5,8 @@ from argparse import ArgumentParser
 from collections import defaultdict
 from glob import glob
 
-from config import OUTPUT_DIR, RAW_CALLGRAPH, STATICCG
-from utils import read_json
+from scripts.config import OUTPUT_DIR, RAW_CALLGRAPH, STATICCG
+from scripts.utils import read_json
 
 ROOT_METHOD = "<boot>"
 

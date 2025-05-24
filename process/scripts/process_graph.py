@@ -2,7 +2,7 @@ import csv
 import os
 from argparse import ArgumentParser
 
-from config import OUTPUT_DIR, STATICCG
+from scripts.config import OUTPUT_DIR, STATICCG
 
 
 def parse_args():

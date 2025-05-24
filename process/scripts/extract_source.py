@@ -7,8 +7,8 @@ from argparse import ArgumentParser
 from glob import glob
 
 import javalang
-from config import CODE_DIR, OUTPUT_DIR, RAW_CALLGRAPH
-from parser_utils import extract_source, shorten_jvm_descriptor
+from scripts.config import CODE_DIR, OUTPUT_DIR, RAW_CALLGRAPH
+from scripts.parser_utils import extract_source, shorten_jvm_descriptor
 
 
 def parse_args():
