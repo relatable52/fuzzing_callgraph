@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from collections import defaultdict
 from glob import glob
 
-from scripts.config import OUTPUT_DIR, STATICCG
+from scripts.config import STATICCG
 from scripts.utils import read_json
 
 ROOT_METHOD = "<boot>"
@@ -159,7 +159,7 @@ def main():
             continue
 
     # Optionally write combined_dict to CSV
-    output_combined = os.path.join(OUTPUT_DIR, program, "combined.csv")
+    output_combined = os.path.join(output_dir, program, "combined.csv")
     all_sources = sorted(cg_paths.keys())
     with open(output_combined, "w", newline="") as f:
         writer = csv.writer(f)
