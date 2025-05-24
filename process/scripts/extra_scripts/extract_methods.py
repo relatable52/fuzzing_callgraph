@@ -1,4 +1,4 @@
-from extract_source import (
+from scripts.extract_source import (
     filter_methods_by_pattern,
     get_methods_from_jar,
     write_methods_to_file,
