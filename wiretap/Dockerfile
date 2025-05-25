@@ -27,5 +27,5 @@ writeTo: DOT,TRACE\n\
 # Run Maven tests with the JDCallgraph agent
 RUN mvn clean test -DargLine="-javaagent:/app/jsoup/jdcallgraph-agent.jar=/app/jsoup/config.ini"
 
-FROM scratch
+FROM scratch as export
 COPY --from=builder /app/jsoup/jdcallgraph_output /jdcallgraph_output
