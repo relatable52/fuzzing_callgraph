@@ -413,7 +413,7 @@ def compute_graph_level_info(graph):
         for edge in node_object.edges:
             total_edges += 1.0
             total_fanout += edge.fanout
-    graph.avg_edge_fanout = total_fanout / total_edges
+    graph.avg_edge_fanout = total_fanout / total_edges if total_edges > 0 else 0
 
 
 def compute_node_disjoint_paths(graph, main_method):
