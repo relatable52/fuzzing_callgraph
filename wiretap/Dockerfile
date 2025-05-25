@@ -1,18 +1,15 @@
 # Use an official Maven image as the base
-FROM openjdk:17-jdk-slim as builder
+FROM maven:3.8.5-openjdk-17 as builder
 
 # Set the working directory
 WORKDIR /app
-
-# Install necessary packages
-RUN apt-get update && apt-get install -y git wget
 
 # Clone the jsoup repository
 RUN git clone https://github.com/jhy/jsoup.git
 WORKDIR /app/jsoup
 
 # Download the JDCallgraph agent
-RUN wget -O jdcallgraph-agent.jar https://github.com/dkarv/jdcallgraph/releases/download/combined-0.1.5/jdcallgraph-0.1-agent.jar
+COPY ./jdcallgraph-0.1-agent.jar /app/jsoup/jdcallgraph-agent.jar
 
 # Create the JDCallgraph configuration file
 RUN echo "\
