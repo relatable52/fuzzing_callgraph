@@ -25,4 +25,4 @@ writeTo: DOT,TRACE\n\
 RUN mvn clean test -DargLine="-javaagent:/app/jsoup/jdcallgraph-agent.jar=/app/jsoup/config.ini"
 
 FROM scratch as export
-COPY --from=builder /app/jsoup/ /jdcallgraph_output
+COPY --from=builder /app/ /jdcallgraph_output
