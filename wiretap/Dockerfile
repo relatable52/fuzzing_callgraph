@@ -1,28 +1,34 @@
-# Stage 1: Build and run jsoup with Wiretap
-FROM maven:3.9-eclipse-temurin-8 as builder
+FROM openjdk:8-jdk
 
-# Install tools
-RUN apt-get update && apt-get install -y git ant
+# Install necessary tools
+RUN apt-get update && apt-get install -y git maven graphviz
 
-# Create working directory
+# Set working directory
 WORKDIR /app
 
-# Clone jsoup
+# Clone jsoup repository
 RUN git clone https://github.com/jhy/jsoup.git
 
-# Clone Wiretap at version v0.1.0
-RUN git clone --branch v0.1.0 https://github.com/ucla-pls/wiretap.git
+# Clone JDCallgraph repository
+RUN git clone https://github.com/dkarv/jdcallgraph.git
 
-# Build Wiretap
-WORKDIR /app/wiretap
-RUN ant
+# Build JDCallgraph
+WORKDIR /app/jdcallgraph
+RUN mvn install
 
-# Back to jsoup dir
+# Create JDCallgraph configuration file
+RUN echo "\
+outDir: /app/jsoup/jdcallgraph_output\n\
+logLevel: 4\n\
+logConsole: true\n\
+multiGraph: false\n\
+groupBy: THREAD\n\
+writeTo: DOT,TRACE\n\
+" > config.ini
+
+# Build jsoup with JDCallgraph agent
 WORKDIR /app/jsoup
+RUN mvn clean test -DargLine="-javaagent:/app/jdcallgraph/target/jdcallgraph.jar=/app/jdcallgraph/config.ini"
 
-# Run tests with Wiretap agent
-RUN mvn clean test -DargLine="-javaagent:/app/wiretap/build/wiretap.jar"
-
-# Stage 2: Export only the dynamic callgraph
-FROM scratch as export
-COPY --from=builder /app/jsoup/target/_wiretap/ /_wiretap/
+# Set default command
+CMD ["bash"]
