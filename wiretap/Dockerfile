@@ -1,5 +1,5 @@
 # Use an official Maven image as the base
-FROM maven:3.8.5-openjdk-17 as builder
+FROM openjdk:17-jdk-slim as builder
 
 # Set the working directory
 WORKDIR /app
