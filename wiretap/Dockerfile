@@ -1,22 +1,20 @@
-FROM openjdk:8-jdk
+# Use an official Maven image as the base
+FROM maven:3.8.5-openjdk-17 as builder
 
-# Install necessary tools
-RUN apt-get update && apt-get install -y git maven graphviz
-
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Clone jsoup repository
+# Install necessary packages
+RUN apt-get update && apt-get install -y git wget
+
+# Clone the jsoup repository
 RUN git clone https://github.com/jhy/jsoup.git
+WORKDIR /app/jsoup
 
-# Clone JDCallgraph repository
-RUN git clone https://github.com/dkarv/jdcallgraph.git
+# Download the JDCallgraph agent
+RUN wget -O jdcallgraph-agent.jar https://github.com/dkarv/jdcallgraph/releases/download/combined-0.1.5/jdcallgraph-0.1-agent.jar
 
-# Build JDCallgraph
-WORKDIR /app/jdcallgraph
-RUN mvn install
-
-# Create JDCallgraph configuration file
+# Create the JDCallgraph configuration file
 RUN echo "\
 outDir: /app/jsoup/jdcallgraph_output\n\
 logLevel: 4\n\
@@ -26,9 +24,8 @@ groupBy: THREAD\n\
 writeTo: DOT,TRACE\n\
 " > config.ini
 
-# Build jsoup with JDCallgraph agent
-WORKDIR /app/jsoup
-RUN mvn clean test -DargLine="-javaagent:/app/jdcallgraph/target/jdcallgraph.jar=/app/jdcallgraph/config.ini"
+# Run Maven tests with the JDCallgraph agent
+RUN mvn clean test -DargLine="-javaagent:/app/jsoup/jdcallgraph-agent.jar=/app/jsoup/config.ini"
 
-# Set default command
-CMD ["bash"]
+FROM scratch
+COPY --from=builder /app/jsoup/jdcallgraph_output /jdcallgraph_output
